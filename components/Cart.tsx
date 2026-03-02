@@ -41,10 +41,15 @@ export default function CartComponent({ goBack, goCheckout }: any) {
     fetchCart();
   }
 
-  const total = cart.reduce((sum, item) => {
-    const price = Number(item.price.replace("$", ""));
-    return sum + price * item.quantity;
-  }, 0);
+const total = cart.reduce((sum, item) => {
+  const rawPrice = item?.price ?? "0";
+  const price =
+    typeof rawPrice === "string"
+      ? Number(rawPrice.replace("$", ""))
+      : Number(rawPrice);
+
+  return sum + price * (item.quantity ?? 1);
+}, 0);
 
   return (
     <div className="mb-2 border bg-white dark:bg-gray-800 rounded-3xl shadow-sm overflow-hidden transition-colors">
