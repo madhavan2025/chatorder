@@ -5,7 +5,7 @@ import PaymentForm from "./Payment";
 export default function CheckoutComponent({ goBack, goHome }: any) {
   const [step, setStep] = useState<"details" | "payment">("details");
   const [cart, setCart] = useState<any[]>([]);
-
+  const [errors, setErrors] = useState<any>({});
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -32,15 +32,64 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
     const price = Number(item.price.replace("$", ""));
     return sum + price * item.quantity;
   }, 0);
+  
+  function validateField(name: string, value: string) {
+  let error = "";
+
+  switch (name) {
+    case "firstName":
+    case "lastName":
+      if (!/^[A-Za-z\s]+$/.test(value)) {
+        error = "Only letters are allowed";
+      }
+      break;
+
+    case "email":
+      if (!/^\S+@\S+\.\S+$/.test(value)) {
+        error = "Enter a valid email address";
+      }
+      break;
+
+    case "phone":
+      if (!/^[0-9]{7,15}$/.test(value)) {
+        error = "Phone must contain only numbers";
+      }
+      break;
+
+    case "zip":
+      if (!/^[0-9]{4,10}$/.test(value)) {
+        error = "ZIP must contain only numbers";
+      }
+      break;
+
+    default:
+      if (!value.trim()) {
+        error = "This field is required";
+      }
+  }
+
+  return error;
+}
 
   function handleChange(e: any) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
+  const { name, value } = e.target;
+
+  setForm({ ...form, [name]: value });
+
+  const error = validateField(name, value);
+
+  setErrors((prev: any) => ({
+    ...prev,
+    [name]: error,
+  }));
+}
 
 
   return (
-    <div className=" border mb-2 bg-white dark:bg-gray-800 rounded-3xl shadow-sm overflow-hidden transition-colors">
-      <div className="p-6">
+     <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+    <div className="relative flex w-full flex-col gap-4">
+    
+      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
         <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
           {step === "details" ? "Checkout" : "Payment"}
         </h2>
@@ -48,10 +97,22 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
         {/* ================= CHECKOUT PAGE ================= */}
         {step === "details" && (
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setStep("payment");
-            }}
+           onSubmit={(e) => {
+  e.preventDefault();
+
+  let newErrors: any = {};
+
+  Object.keys(form).forEach((key) => {
+    const error = validateField(key, (form as any)[key]);
+    if (error) newErrors[key] = error;
+  });
+
+  setErrors(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    setStep("payment");
+  }
+}}
             className="space-y-10"
           >
             {/* -------- ORDER SUMMARY -------- */}
@@ -104,6 +165,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                   className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
+                {errors.firstName && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.firstName}
+  </p>
+)}
                 <input
                   name="lastName"
                   placeholder="Last Name"
@@ -112,6 +178,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                   className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
+                {errors.lastName && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.lastName}
+  </p>
+)}
               </div>
 
               <input
@@ -122,7 +193,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
-
+              {errors.email && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.email}
+  </p>
+)}
               <input
                 name="phone"
                 placeholder="Phone"
@@ -131,7 +206,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
-
+              {errors.phone && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.phone}
+  </p>
+)}
               <input
                 name="address"
                 placeholder="Street Address"
@@ -140,7 +219,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
-
+               {errors.address && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.address}
+  </p>
+)}
               <div className="grid grid-cols-3 gap-4 mt-4">
                 <input
                   name="city"
@@ -150,6 +233,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                   className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
+                {errors.city && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.city}
+  </p>
+)}
                 <input
                   name="state"
                   placeholder="State"
@@ -158,6 +246,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                   className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
+                {errors.state&& (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.state}
+  </p>
+)}
                 <input
                   name="zip"
                   placeholder="ZIP Code"
@@ -166,6 +259,11 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                   className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
+                {errors.zip&& (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.zip}
+  </p>
+)}
               </div>
 
               <input
@@ -176,13 +274,18 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
+              {errors.country && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.country}
+  </p>
+)}
             </div>
 
             {/* -------- BUTTONS -------- */}
             <div className="flex gap-4 pt-4">
               <button
                 type="submit"
-                className="bg-black dark:bg-gray-700 text-white px-6 py-2 rounded hover:bg-gray-900 dark:hover:bg-gray-600 transition"
+                className="bg-blue-700 cursor-pointer text-white px-6 py-2 rounded hover:bg-blue-900 transition"
               >
                 Proceed to Payment
               </button>
@@ -190,7 +293,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
               <button
                 type="button"
                 onClick={goBack}
-                className="underline text-gray-900 dark:text-gray-100"
+                className="mt-2 text-blue-600 hover:text-blue-700 text-sm underline cursor-pointer"
               >
                 Back to Cart
               </button>
@@ -203,6 +306,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
           <PaymentForm goBack={() => setStep("details")} goHome={goHome} />
         )}
       </div>
+    </div>
     </div>
   );
 }

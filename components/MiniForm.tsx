@@ -78,8 +78,15 @@ export function MiniForm({ config }: MiniFormProps) {
 
   if (submitted) {
     return (
+     <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+    <div className="relative flex w-full flex-col gap-4">
+    
+      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
       <div className="rounded-xl mb-2 border bg-green-50 dark:bg-green-900 dark:text-green-100 p-4 text-sm">
         {config.successMessage}
+      </div>
+      </div>
+      </div>
       </div>
     );
   }
@@ -87,8 +94,11 @@ export function MiniForm({ config }: MiniFormProps) {
   return (
    <form
   onSubmit={handleSubmit}
-  className="w-full max-w-none rounded-xl mb-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-4 space-y-3 transition-colors"
 >
+  <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+    <div className="relative flex w-full flex-col gap-4">
+    
+      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
       <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
         {config.title}
       </h3>
@@ -144,6 +154,9 @@ export function MiniForm({ config }: MiniFormProps) {
       >
         {loading ? "Submitting..." : config.submitLabel}
       </button>
+      </div>
+      </div>
+      </div>
     </form>
   );
 }

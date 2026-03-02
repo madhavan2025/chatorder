@@ -17,7 +17,10 @@ export function ContentListing({ items, count }: ContentListingProps) {
   const router = useRouter();
 
   return (
-    <div className=" border p-4 space-y-4 mb-2 bg-white dark:bg-gray-800 rounded-md transition-colors">
+    <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+    <div className="relative flex w-full flex-col gap-4">
+    
+      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
       <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
         Recommended for you
       </h3>
@@ -47,6 +50,8 @@ export function ContentListing({ items, count }: ContentListingProps) {
           No content available.
         </p>
       )}
+    </div>
+    </div>
     </div>
   );
 }

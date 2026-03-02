@@ -244,6 +244,7 @@ useEffect(() => {
     fileInputRef.current?.click();
   }}
   disabled={status !== "ready"}
+  
 >
   <PaperclipIcon size={14} />
 </Button>
@@ -256,11 +257,13 @@ useEffect(() => {
   disabled={!input.trim() || uploadQueue.length > 0}
   status={status}
 className="
-  text-white 
-  transition-colors
-  disabled:opacity-50 
-  disabled:cursor-not-allowed
-  cursor-pointer
+ bg-blue-500 
+    hover:bg-blue-700 
+    text-white 
+    transition-colors
+    disabled:opacity-50 
+    disabled:cursor-not-allowed
+    cursor-pointer
 "
 >
   <ArrowUpIcon size={14} />

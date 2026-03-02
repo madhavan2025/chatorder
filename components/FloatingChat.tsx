@@ -95,7 +95,7 @@ if (loadingTheme) return null;
     className={`fixed z-[9999]  transition-all duration-300 ease-in-out
       ${
         isFullScreen
-          ? "inset-0 flex items-center justify-center bg-black/40 p-4"
+          ? "inset-0 flex items-center justify-center bg-black/40 sm:p-4"
           : "bottom-4 right-4"
       }
     `}
@@ -122,17 +122,18 @@ if (loadingTheme) return null;
         className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-100"
         style={{
           backgroundColor: theme?.headerBg,
-          color: theme?.headerTextColor,
+          color: isDarkMode ? theme?.headerTextColor : "#ffffff",
         }}
       >
         <span className="font-semibold">Sykalab-AI-ShopAgent</span>
 
         <div className="flex items-center gap-3">
           {/* Dark Mode Toggle */}
-          {/* Dark Mode Toggle */}
 <button
   onClick={() => setIsDarkMode(!isDarkMode)}
-  className="hover:opacity-80 cursor-pointer flex items-center justify-center"
+  className={`hover:opacity-80 cursor-pointer flex items-center justify-center ${
+    !isDarkMode ? "text-white" : ""
+  }`}
 >
   {isDarkMode ? (
     <Sun size={18} />
@@ -143,7 +144,9 @@ if (loadingTheme) return null;
           {/* Expand / Minimize */}
           <button
             onClick={() => setIsFullScreen(!isFullScreen)}
-            className="hover:opacity-80 cursor-pointer"
+           className={`hover:opacity-80 cursor-pointer ${
+  !isDarkMode ? "text-white" : ""
+}`}
           >
             {isFullScreen ? (
               <Minimize2 size={18} />
@@ -154,7 +157,9 @@ if (loadingTheme) return null;
 
           {/* Close */}
           <button
-            className="cursor-pointer"
+            className={`hover:opacity-80 cursor-pointer ${
+  !isDarkMode ? "text-white" : ""
+}`}
             onClick={() => {
               setIsOpen(false);
               setIsFullScreen(false);

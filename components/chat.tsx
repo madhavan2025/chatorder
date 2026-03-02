@@ -242,8 +242,8 @@ useEffect(() => {
 <div
   className="relative flex h-full min-h-0 flex-col items-center"
 > 
-<div className="flex-1 overflow-y-auto min-h-0">
-  <div className="mx-auto w-full max-w-4xl flex flex-col">
+<div className="flex-1 items-center w-full overflow-y-auto min-h-0 ">
+  <div className="mx-auto  flex flex-col">
   <Messages
     chatId={id}
     isArtifactVisible={false}
@@ -259,19 +259,19 @@ useEffect(() => {
 
 
 {showListings && listingType && !showCart && !showCheckout && (
-  <div className="px-2 pt-3">
-    <ListingsCarousel
+  
+   <ListingsCarousel
       style={listingType}
       onViewCart={() => {
         setShowListings(false);
         setShowCart(true);
       }}
     />
-  </div>
+   
 )}
 
 {showCart && (
-  <div className="px-2 pt-3">
+  
     <CartComponent
       goBack={() => {
         setShowCart(false);
@@ -282,11 +282,11 @@ useEffect(() => {
         setShowCheckout(true);
       }}
     />
-  </div>
+  
 )}
 
 {showCheckout && (
-  <div className="px-2 pt-3">
+  
     <CheckoutComponent
       goBack={() => {
         setShowCheckout(false);
@@ -299,30 +299,30 @@ useEffect(() => {
         
       }}
     />
-  </div>
+  
 )}
 
 {showContentList && (
-   <div className="px-2 pt-3">
+   
   <ContentListing
     items={contents}
     count={contents.length}
   />
-  </div>
+  
 )}
 
 
             {showForm && formConfig &&( 
-            <div className="px-2 pt-3">
+            
             <MiniForm config={formConfig} />
-            </div>)}
+            )}
      </div>
 </div>
     
 
   {/* Sticky input */}
   {!isReadonly && (
-    <div className="sticky bottom-0 bg-inherit mx-auto w-full max-w-4xl  px-2 pb-3 md:px-4 md:pb-4"
+    <div className="sticky bottom-0 bg-inherit mx-auto w-full max-w-4xl  px-2 pb-4 "
     >
       <MultimodalInput
         chatId={id}

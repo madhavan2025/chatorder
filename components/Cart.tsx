@@ -52,8 +52,10 @@ const total = cart.reduce((sum, item) => {
 }, 0);
 
   return (
-    <div className="mb-2 border bg-white dark:bg-gray-800 rounded-3xl shadow-sm overflow-hidden transition-colors">
-      <div className="p-6">
+ <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+    <div className="relative flex w-full flex-col gap-4">
+    
+      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
         <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
           Your Order
         </h2>
@@ -67,7 +69,7 @@ const total = cart.reduce((sum, item) => {
 
             <button
               onClick={goBack}
-              className="bg-black dark:bg-gray-700 text-white px-6 py-2 rounded hover:bg-gray-900 dark:hover:bg-gray-600 transition"
+              className="bg-blue-700 cursor-pointer text-white px-6 py-2 rounded hover:bg-blue-900  transition"
             >
               Continue Shopping
             </button>
@@ -83,7 +85,7 @@ const total = cart.reduce((sum, item) => {
                 {/* Remove Icon */}
                 <button
                   onClick={() => removeItem(item._id)}
-                  className="absolute top-0 right-0 text-gray-400 dark:text-gray-300 hover:text-red-500 transition text-lg"
+                  className="absolute cursor-pointer top-0 right-0 text-gray-400 dark:text-gray-300 hover:text-red-500 transition text-lg"
                 >
                   ✕
                 </button>
@@ -105,7 +107,7 @@ const total = cart.reduce((sum, item) => {
                   <div className="flex items-center gap-3 mt-2">
                     <button
                       onClick={() => decrease(item._id)}
-                      className="px-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                      className="px-2 cursor-pointer bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-600 transition"
                     >
                       -
                     </button>
@@ -116,7 +118,7 @@ const total = cart.reduce((sum, item) => {
 
                     <button
                       onClick={() => increase(item._id)}
-                      className="px-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+                      className="px-2 cursor-pointer bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-600 transition"
                     >
                       +
                     </button>
@@ -157,14 +159,14 @@ const total = cart.reduce((sum, item) => {
             <div className="flex gap-4 mt-6">
               <button
                 onClick={goCheckout}
-                className="bg-black dark:bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-900 dark:hover:bg-gray-600 transition"
+                className="bg-blue-700 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-900 transition"
               >
                 Checkout
               </button>
 
               <button
                 onClick={goBack}
-                className="underline text-gray-900 dark:text-gray-100"
+                className="mt-2 text-blue-600 hover:text-blue-700 text-sm underline cursor-pointer"
               >
                 Continue Shopping
               </button>
@@ -172,6 +174,7 @@ const total = cart.reduce((sum, item) => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 }

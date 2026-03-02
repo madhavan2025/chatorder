@@ -89,25 +89,22 @@ useEffect(() => {
   }, []);
 
 
-  if (!products || products.length === 0) {
-    return <div>No products available</div>;
-  }
+  
 
 
 
 
   const renderType1 = () => (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-4 ">
       {visibleListings.map((listing) => (
         <div key={listing._id} className="rounded-lg p-4">
           <div className="relative group">
           <img
             src={listing.image}
             alt={listing.title}
-            className="w-full h-64 object-cover rounded-md cursor-pointer"
-            onClick={() => handleClick(listing)}
+            className="w-full h-64 object-cover rounded-md "
+            
           />
-
            <button
     onClick={prev}
     className="absolute left-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition cursor-pointer"
@@ -150,21 +147,21 @@ useEffect(() => {
           {justAdded[listing._id] ? (
             <button
               disabled
-              className="mt-2 w-full bg-green-600 text-white py-2 rounded-md"
+              className="mt-2  bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
             >
               Added ✓
             </button>
           ) : addedItems[listing._id] ? (
             <button
                onClick={() => onViewCart?.()}
-              className="mt-2 w-full text-gray-600 dark:text-gray-100 text-xs underline cursor-pointer"
+              className="mt-2 text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
             >
               View cart
             </button>
           ) : (
             <button
               onClick={() => handleAddToCart(listing)}
-              className="mt-2 w-full bg-black text-white py-2 rounded-md cursor-pointer"
+              className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-md cursor-pointer"
             >
               Add to cart
             </button>
@@ -175,11 +172,8 @@ useEffect(() => {
   );
 
   const renderType2 = () => {
-
-
-
   return(
-     <div className="relative group">
+     <div className="relative group ">
        <button
     onClick={prev}
     className="absolute left-2 top-20 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition cursor-pointer"
@@ -214,14 +208,14 @@ useEffect(() => {
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
     </svg>
   </button>
-    <div className="grid grid-cols-2  gap-4">
+    <div className="grid grid-cols-2 gap-4">
       {visibleListings.map((listing) => (
-       <div key={listing._id} className="border-2  rounded-lg hover:shadow-xl transition">
+       <div key={listing._id} className="border rounded-xl transition">
           <img
             src={listing.image}
             alt={listing.title}
             className="w-full h-48 object-cover"
-            onClick={() => handleClick(listing)}
+            
           />
             <div className="p-4 flex flex-col gap-2">
           <h4 className="text-sm text-gray-900 dark:text-gray-100 font-semibold line-clamp-2 min-h-[40px]">
@@ -236,30 +230,30 @@ useEffect(() => {
           <p className="text-sm text-gray-600 dark:text-gray-100 line-clamp-3 flex-1">
             {listing.description}
           </p>
+         
+              {justAdded[listing._id] ? (
+  <button
+    disabled
+    className="mt-2 bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed self-start"
+  >
+    Added ✓
+  </button>
+) : addedItems[listing._id] ? (
+  <button
+    onClick={() => onViewCart?.()}
+    className="mt-2 text-xs underline text-blue-600 d hover:text-blue-700 cursor-pointer self-start"
+  >
+    View cart
+  </button>
+) : (
+  <button
+    onClick={() => handleAddToCart(listing)}
+    className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-md cursor-pointer self-start"
+  >
+    Add to cart
+  </button>
+)}
           </div>
-                   {justAdded[listing._id] ? (
-            <button
-              disabled
-              className="mt-2 w-full bg-green-600 text-white py-2 rounded-md cursor-not-allowed"
-            >
-              Added ✓
-            </button>
-          ) : addedItems[listing._id] ? (
-            <button
-             onClick={() => onViewCart?.()}
-              className="mt-2 w-full text-xs underline text-gray-600 dark:text-gray-100 hover:text-gray-700 cursor-pointer"
-            >
-              View cart
-            </button>
-          ) : (
-            <button
-              onClick={() => handleAddToCart(listing)}
-              className="mt-2 w-full bg-black text-white py-2 rounded-md cursor-pointer"
-            >
-              Add to cart
-            </button>
-          )}
-
         </div>
       ))}
     </div>
@@ -267,11 +261,17 @@ useEffect(() => {
   );
   };
   return (
-    <div className="w-full max-w-4xl p-4  mb-2 rounded-xl border ">
+    <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+    <div className="relative flex w-full flex-col gap-4">
+    
+      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
       <h3 className="mb-3 text-sm font-semibold  text-gray-900 dark:text-gray-100">
         Featured Listings
       </h3>
   {style === "type1" ? renderType1() : renderType2()}
+  </div>
     </div>
+    </div>
+    
   );
 }

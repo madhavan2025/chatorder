@@ -5,7 +5,8 @@ import { useCopyToClipboard } from "usehooks-ts";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { Action, Actions } from "./elements/actions";
-import { CopyIcon, PencilEditIcon, ThumbDownIcon, ThumbUpIcon } from "./icons";
+import { CopyIcon, PencilEditIcon, ThumbDownIcon, ThumbUpIcon} from "./icons";
+import { CheckIcon } from "lucide-react";
 
 export function PureMessageActions({
   chatId,
@@ -114,8 +115,13 @@ export function PureMessageActions({
             onClick={handleCopy}
             tooltip={copied ? "Copied!" : "Copy"}
           >
-
-            <CopyIcon />
+            <span
+    className={`transition-colors ${
+      copied ? "text-green-500" : "text-muted-foreground"
+    }`}
+  >
+    {copied ? <CheckIcon /> : <CopyIcon />}
+  </span>
           </Action>
         </div>
       </Actions>
@@ -128,7 +134,13 @@ export function PureMessageActions({
         onClick={handleCopy}
         tooltip={copied ? "Copied!" : "Copy"}
       >
-        <CopyIcon />
+          <span
+    className={`transition-colors ${
+      copied ? "text-green-500" : "text-muted-foreground"
+    }`}
+  >
+    {copied ? <CheckIcon /> : <CopyIcon />}
+  </span>
       </Action>
       <Action onClick={() => handleVote("up")} tooltip="Upvote">
         <span
