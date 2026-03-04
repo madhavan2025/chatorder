@@ -97,36 +97,10 @@ export function PureMessageActions({
     );
   };
   // User messages get edit (on hover) and copy actions
-  if (message.role === "user") {
-    return (
-      <Actions className="-mr-0.5 justify-end">
-        <div className="relative">
-          {setMode && (
-            <Action
-              className="absolute top-0 -left-10 opacity-0 transition-opacity focus-visible:opacity-100 group-hover/message:opacity-100"
-              data-testid="message-edit-button"
-              onClick={() => setMode("edit")}
-              tooltip="Edit"
-            >
-              <PencilEditIcon />
-            </Action>
-          )}
-        <Action
-            onClick={handleCopy}
-            tooltip={copied ? "Copied!" : "Copy"}
-          >
-            <span
-    className={`transition-colors ${
-      copied ? "text-green-500" : "text-muted-foreground"
-    }`}
-  >
-    {copied ? <CheckIcon /> : <CopyIcon />}
-  </span>
-          </Action>
-        </div>
-      </Actions>
-    );
-  }
+// No actions for user messages
+if (message.role === "user") {
+  return null;
+}
 
   return (
     <Actions className="-ml-0.5">
