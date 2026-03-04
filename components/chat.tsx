@@ -39,13 +39,15 @@ export function Chat({
   initialMessages,
   initialVisibilityType,
   isReadonly,
+  isExpanded = false,
 
 }: {
   id: string;
   initialMessages: ChatMessage[];
   initialVisibilityType: VisibilityType;
   isReadonly: boolean;
-  autoResume?: boolean; // ✅ optional in type
+  autoResume?: boolean; //
+  isExpanded?: boolean;
   
 }) {
   /* ---------------- UI STATE ONLY ---------------- */
@@ -262,6 +264,7 @@ useEffect(() => {
   
    <ListingsCarousel
       style={listingType}
+       isExpanded={isExpanded}
       onViewCart={() => {
         setShowListings(false);
         setShowCart(true);

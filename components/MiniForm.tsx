@@ -92,71 +92,67 @@ export function MiniForm({ config }: MiniFormProps) {
   }
 
   return (
-   <form
-  onSubmit={handleSubmit}
->
-  <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
-    <div className="relative flex w-full flex-col gap-4">
-    
-      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-        {config.title}
-      </h3>
+  <form onSubmit={handleSubmit} className="w-full flex justify-center">
+    <div className="w-full max-w-xl px-4 py-6">
+      <div className="rounded-xl border shadow-sm p-6 space-y-5 bg-white dark:bg-gray-800">
+        
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          {config.title}
+        </h3>
 
-      {config.fields.map((field) => (
-        <div key={field.name}>
-          {field.label && (
-            <label className="block text-xs mb-1 text-gray-700 dark:text-gray-300">
-              {field.label}
-            </label>
-          )}
+        {config.fields.map((field) => (
+          <div key={field.name} className="space-y-1">
+            {field.label && (
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {field.label}
+              </label>
+            )}
 
-          {field.type === "textarea" ? (
-            <textarea
-              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
-              placeholder={field.placeholder}
-              value={formData[field.name] || ""}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-            />
-          ) : field.type === "select" ? (
-            <select
-              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
-              value={formData[field.name] || ""}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-            >
-              <option value="">Select</option>
-              {field.options?.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type={field.type}
-              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
-              placeholder={field.placeholder}
-              value={formData[field.name] || ""}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-            />
-          )}
+            {field.type === "textarea" ? (
+              <textarea
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 outline-none"
+                placeholder={field.placeholder}
+                value={formData[field.name] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value)}
+              />
+            ) : field.type === "select" ? (
+              <select
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 outline-none"
+                value={formData[field.name] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value)}
+              >
+                <option value="">Select</option>
+                {field.options?.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={field.type}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 outline-none"
+                placeholder={field.placeholder}
+                value={formData[field.name] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value)}
+              />
+            )}
 
-          {errors[field.name] && (
-            <p className="text-xs text-red-500 mt-1">{errors[field.name]}</p>
-          )}
-        </div>
-      ))}
+            {errors[field.name] && (
+              <p className="text-xs text-red-500">{errors[field.name]}</p>
+            )}
+          </div>
+        ))}
 
-      <button
-        type="submit"
-        className="w-full rounded-md bg-black dark:bg-gray-700 text-white px-3 py-2 text-sm font-semibold hover:bg-gray-900 dark:hover:bg-gray-600 transition cursor-pointer"
-        disabled={loading}
-      >
-        {loading ? "Submitting..." : config.submitLabel}
-      </button>
+        <button
+          type="submit"
+          className="w-full rounded-md bg-blue-600  text-white px-4 py-2 text-sm font-semibold hover:bg-blue-700 transition"
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : config.submitLabel}
+        </button>
       </div>
-      </div>
-      </div>
-    </form>
-  );
+    </div>
+  </form>
+);
 }

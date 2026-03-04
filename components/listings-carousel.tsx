@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 type Listing = {
   _id: string;
@@ -13,28 +12,31 @@ type Listing = {
 type ListingsCarouselProps = {
   style?: "type1" | "type2";
   onViewCart?:()=>void;
+  isExpanded?: boolean;
 };
 
 export function ListingsCarousel({
   style = "type1",
   onViewCart,
+  isExpanded=false,
 }: ListingsCarouselProps) {
   const [index, setIndex] = useState(0);
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
   const [justAdded, setJustAdded] = useState<Record<string, boolean>>({});
   const [products, setProducts] = useState<any[]>([]);
   const [cartItems, setCartItems] = useState<Record<string, boolean>>({});
-  const visibleCount = style === "type1" ? 1 : 2;
   const total = products.length;
-  const router = useRouter();
+  const visibleCount = isExpanded
+  ? 3
+  : style === "type2"
+  ? 2
+  : 1;
   const next = () => setIndex((i) => (i + visibleCount) % total);
   const prev = () => setIndex((i) => (i - visibleCount + total) % total);
   const visibleListings = products.slice(index, index + visibleCount);
 
 
-  const handleClick = (listing: Listing) => {
-    router.push(`/product/${listing._id}`);
-  };
+
 
   async function getProducts() {
   const res = await fetch("/api/products");
@@ -91,13 +93,24 @@ useEffect(() => {
 
   
 
+  const renderType1 = () => {
+    const gridCols =
+    visibleCount === 3
+      ? "grid-cols-3"
+      : visibleCount === 2
+      ? "grid-cols-2"
+      : "grid-cols-1";
+      return (
+    <div className={`grid gap-4 ${gridCols}`}>
+      {visibleListings.map((listing, i) => {
+      const isFirst = i === 0;
+        const isLast = i === visibleListings.length - 1;
+        const showSingleViewArrows = visibleCount === 1;
+        const showMultiLeft = visibleCount === 3 && isFirst;
+        const showMultiRight = visibleCount === 3 && isLast;
 
-
-
-  const renderType1 = () => (
-    <div className="grid grid-cols-1 gap-4 ">
-      {visibleListings.map((listing) => (
-        <div key={listing._id} className="rounded-lg p-4">
+  return (
+        <div key={listing._id} className="rounded-lg p-4 flex flex-col h-full">
           <div className="relative group">
           <img
             src={listing.image}
@@ -105,71 +118,77 @@ useEffect(() => {
             className="w-full h-64 object-cover rounded-md "
             
           />
-           <button
-    onClick={prev}
-    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition cursor-pointer"
-    aria-label="Previous"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-8 w-8 text-white drop-shadow-lg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
+          
+            {(showSingleViewArrows || showMultiLeft) && (
+    <button
+      onClick={prev}
+      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-    </svg>
-  </button>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-8 w-8 text-white drop-shadow-lg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  )}
 
-  {/* Next */}
-  <button
-    onClick={next}
-    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition cursor-pointer"
-    aria-label="Next"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-8 w-8 text-white drop-shadow-lg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
+  {/* Show RIGHT arrow only on last card when 3 visible */}
+  {(showSingleViewArrows || showMultiRight) && (
+    <button
+      onClick={next}
+      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition"
     >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
-  </button>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-8 w-8 text-white drop-shadow-lg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  )}
+         
 </div>
           <h4 className="mt-2 font-semibold  text-gray-900 dark:text-gray-100">{listing.title}</h4>
           <p className=" text-gray-800 dark:text-gray-100">{listing.price}</p>
-          <p className="text-sm line-clamp-3  text-gray-600 dark:text-gray-100">{listing.description}</p>
+          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 flex-1">{listing.description}</p>
 
           {justAdded[listing._id] ? (
             <button
               disabled
-              className="mt-2  bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
+              className="mt-2 self-start bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
             >
               Added ✓
             </button>
           ) : addedItems[listing._id] ? (
             <button
                onClick={() => onViewCart?.()}
-              className="mt-2 text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
+              className="mt-2 self-start text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
             >
               View cart
             </button>
           ) : (
             <button
               onClick={() => handleAddToCart(listing)}
-              className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-md cursor-pointer"
+              className=" mt-2 self-start bg-blue-600 hover:bg-blue-700  text-white py-2 px-4 rounded-md cursor-pointer"
             >
               Add to cart
             </button>
           )}
         </div>
-      ))}
+  );
+  })}
     </div>
   );
+}
 
   const renderType2 = () => {
   return(
@@ -208,9 +227,17 @@ useEffect(() => {
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
     </svg>
   </button>
-    <div className="grid grid-cols-2 gap-4">
+    <div
+ className={`grid gap-4 ${
+  visibleCount === 3
+    ? "grid-cols-3"
+    : visibleCount === 2
+    ? "grid-cols-2"
+    : "grid-cols-1"
+}`}
+>
       {visibleListings.map((listing) => (
-       <div key={listing._id} className="border rounded-xl transition">
+       <div key={listing._id} className="transition">
           <img
             src={listing.image}
             alt={listing.title}
@@ -227,7 +254,7 @@ useEffect(() => {
             {listing.price}
           </p>
 
-          <p className="text-sm text-gray-600 dark:text-gray-100 line-clamp-3 flex-1">
+          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 flex-1">
             {listing.description}
           </p>
          

@@ -178,7 +178,7 @@ if (loadingTheme) return null;
           initialVisibilityType={initialVisibilityType}
           isReadonly={isReadonly}
           autoResume={autoResume}
-          
+          isExpanded={isFullScreen}
         />
         
       </div>
