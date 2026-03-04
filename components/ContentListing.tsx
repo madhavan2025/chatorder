@@ -33,7 +33,6 @@ export function ContentListing({
     </div>
   );
 };
-
   return (
     <div className="mx-auto w-full max-w-4xl px-2 pb-4">
       <div className="relative flex w-full flex-col gap-4">

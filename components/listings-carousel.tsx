@@ -330,9 +330,8 @@ const renderSkeleton = () => {
   : style === "type1"
   ? renderType1()
   : renderType2()}
-  </div>
-    </div>
-    </div>
-    
+</div>
+</div>
+</div>
   );
 }
