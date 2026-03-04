@@ -157,32 +157,34 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
               </h3>
 
               <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col">
                 <input
                   name="firstName"
                   placeholder="First Name"
                   value={form.firstName}
                   onChange={handleChange}
-                  className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
                 {errors.firstName && (
   <p className="text-red-500 text-sm mt-1">
     {errors.firstName}
   </p>
-)}
+)} </div>
+                <div className="flex flex-col">
                 <input
                   name="lastName"
                   placeholder="Last Name"
                   value={form.lastName}
                   onChange={handleChange}
-                  className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
                 {errors.lastName && (
   <p className="text-red-500 text-sm mt-1">
     {errors.lastName}
   </p>
-)}
+)} </div>
               </div>
 
               <input
@@ -190,7 +192,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 placeholder="Email"
                 value={form.email}
                 onChange={handleChange}
-                className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
               {errors.email && (
@@ -203,7 +205,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 placeholder="Phone"
                 value={form.phone}
                 onChange={handleChange}
-                className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
               {errors.phone && (
@@ -216,7 +218,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 placeholder="Street Address"
                 value={form.address}
                 onChange={handleChange}
-                className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
                {errors.address && (
@@ -225,38 +227,42 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
   </p>
 )}
               <div className="grid grid-cols-3 gap-4 mt-4">
+                <div className="flex flex-col">
                 <input
                   name="city"
                   placeholder="City"
                   value={form.city}
                   onChange={handleChange}
-                  className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
                 {errors.city && (
   <p className="text-red-500 text-sm mt-1">
     {errors.city}
   </p>
-)}
+)}</div>
+                <div className="flex flex-col">
                 <input
                   name="state"
                   placeholder="State"
                   value={form.state}
                   onChange={handleChange}
-                  className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
                 {errors.state&& (
   <p className="text-red-500 text-sm mt-1">
     {errors.state}
   </p>
-)}
+)} </div>
+
+               <div className="flex flex-col">
                 <input
                   name="zip"
                   placeholder="ZIP Code"
                   value={form.zip}
                   onChange={handleChange}
-                  className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
                 {errors.zip&& (
@@ -264,6 +270,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
     {errors.zip}
   </p>
 )}
+</div>
               </div>
 
               <input
@@ -271,7 +278,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
                 placeholder="Country"
                 value={form.country}
                 onChange={handleChange}
-                className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 required
               />
               {errors.country && (

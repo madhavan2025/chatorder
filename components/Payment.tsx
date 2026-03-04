@@ -132,7 +132,7 @@ export default function PaymentForm({ goBack, goHome }: any) {
           placeholder="Name on Card"
           value={card.cardName}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           required
         />
         {errors.cardName && (
@@ -146,7 +146,7 @@ export default function PaymentForm({ goBack, goHome }: any) {
           placeholder="Card Number"
           value={card.cardNumber}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           required
         />
         {errors.cardNumber && (
@@ -161,7 +161,7 @@ export default function PaymentForm({ goBack, goHome }: any) {
             placeholder="MM/YY"
             value={card.expiry}
             onChange={handleChange}
-            className="border p-2 rounded w-full"
+            className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             required
           />
           {errors.expiry && (
@@ -175,7 +175,7 @@ export default function PaymentForm({ goBack, goHome }: any) {
             placeholder="CVV"
             value={card.cvv}
             onChange={handleChange}
-            className="border p-2 rounded w-full"
+            className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             required
           />
           {errors.cvv && (
