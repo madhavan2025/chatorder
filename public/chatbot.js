@@ -6,7 +6,7 @@
   const button = document.createElement("button");
 button.innerHTML = `
     <img
-      src="https://sykasysbot.vercel.app/images/chat.png"
+      src="https://chatbot-woad-six.vercel.app/images/chat.png"
       alt="Chat"
       style="width:60px;height:60px;object-fit:contain;"
     />
@@ -49,7 +49,7 @@ button.innerHTML = `
 
   const openChat = () => {
     if (!iframe.src) {
-      iframe.src = "https://sykasysbot.vercel.app/?embed=true";
+      iframe.src = "https://chatbot-woad-six.vercel.app/?embed=true";
     }
     iframe.style.display = "block";
     isOpen = true;
