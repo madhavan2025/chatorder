@@ -82,11 +82,11 @@
   // MOBILE
   if (w <= 640) {
     iframe.style.width = "100vw";
-    iframe.style.height = "100vh";
-    iframe.style.bottom = "0";
-    iframe.style.right = "0";
-    iframe.style.transform = "none";
-    iframe.style.borderRadius = "0";
+iframe.style.height = "100vh";
+iframe.style.bottom = "0";
+iframe.style.right = "0";
+iframe.style.left = "0";
+iframe.style.top = "0";
   }
 
   // DESKTOP / TABLET
@@ -110,19 +110,26 @@
     isOpen = true;
 
     // MOBILE DEFAULT FULLSCREEN
-   if (isExpanded) {
+   const w = window.innerWidth;
+
+if (w <= 640) {
+  isExpanded = true;
   applyFullScreen();
 } else {
-  applyWidgetSize();
+  if (isExpanded) {
+    applyFullScreen();
+  } else {
+    applyWidgetSize();
+  }
 }
   };
 
   const closeChat = () => {
-    iframe.style.display = "none";
-    isOpen = false;
-    isExpanded = false;
-  };
-
+  iframe.style.display = "none";
+  button.style.display = "block";
+  isOpen = false;
+  isExpanded = false;
+};
   // MESSAGE LISTENER
   window.addEventListener("message", (event) => {
 
@@ -131,14 +138,16 @@
     }
 
     if (event.data?.type === "toggleExpand") {
-      isExpanded = event.data.value;
+  isExpanded = event.data.value;
 
-      if (isExpanded) {
-        applyFullScreen();
-      } else {
-        applyWidgetSize();
-      }
-    }
+  if (isExpanded) {
+    applyFullScreen();
+    button.style.display = "none";   // hide icon
+  } else {
+    applyWidgetSize();
+    button.style.display = "block";  // show icon
+  }
+}
 
   });
 
