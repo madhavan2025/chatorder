@@ -30,10 +30,10 @@ export function ListingsCarousel({
   const [loading, setLoading] = useState(true);
   const visibleCount = isMobile
   ? 1
-  : isExpanded
-  ? 3
   : style === "type2"
   ? 2
+  : isExpanded
+  ? 3
   : 1;
   const next = () => setIndex((i) => (i + visibleCount) % total);
   const prev = () => setIndex((i) => (i - visibleCount + total) % total);
