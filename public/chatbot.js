@@ -1,11 +1,33 @@
 (function () {
   let isOpen = false;
   let isExpanded = false;
+
+    const iframe = document.createElement("iframe");
+
   iframe.setAttribute(
-  "allow",
-  "clipboard-write; microphone; camera; fullscreen"
-);
+    "allow",
+    "clipboard-write; microphone; camera; fullscreen"
+  );  
   
+  Object.assign(iframe.style, {
+    position: "fixed",
+    bottom: "90px",
+    right: "20px",
+    width: "380px",
+    height: "600px",
+    maxWidth: "92vw",
+    maxHeight: "80vh",
+    border: "none",
+    borderRadius: "12px",
+    boxShadow: "0 10px 30px rgba(0,0,0,.2)",
+    display: "none",
+    zIndex: "9999",
+    background: "#fff",
+    transition: "all .25s ease",
+    pointerEvents: "auto"
+  });
+
+    document.body.appendChild(iframe);
 
   // CHAT BUTTON
   const button = document.createElement("button");
@@ -40,29 +62,6 @@
   button.style.boxShadow = "none";
 };
 
-  // IFRAME
-  const iframe = document.createElement("iframe");
-
-  Object.assign(iframe.style, {
-    position: "fixed",
-    bottom: "90px",
-    right: "20px",
-    width: "380px",
-    height: "600px",
-    maxWidth: "92vw",
-    maxHeight: "80vh",
-    border: "none",
-    borderRadius: "12px",
-    boxShadow: "0 10px 30px rgba(0,0,0,.2)",
-    display: "none",
-    zIndex: "9999",
-    background: "#fff",
-    transition: "all .25s ease"
-  });
-
-  iframe.allow = "clipboard-write; microphone";
-
-  document.body.appendChild(iframe);
 
   function applyWidgetSize() {
 
@@ -73,8 +72,6 @@
   iframe.style.bottom = "90px";
   iframe.style.right = "20px";
   iframe.style.borderRadius = "12px";
-  iframe.style.pointerEvents = "auto";
-iframe.style.background = "transparent";
 
 }
 
