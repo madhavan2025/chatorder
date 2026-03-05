@@ -43,7 +43,7 @@ export function ListingsCarousel({
 
   useEffect(() => {
   const checkMobile = () => {
-    let width = window.screen.width;
+    let width = window.innerWidth;
 
     // if running inside iframe use parent width
     if (window.parent && window.parent !== window) {
