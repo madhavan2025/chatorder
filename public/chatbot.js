@@ -1,8 +1,11 @@
 (function () {
   let isOpen = false;
   let isExpanded = false;
-
-  const isMobile = () => window.innerWidth <= 640;
+  iframe.setAttribute(
+  "allow",
+  "clipboard-write; microphone; camera; fullscreen"
+);
+  
 
   // CHAT BUTTON
   const button = document.createElement("button");
@@ -25,10 +28,17 @@
     padding: "0",
     cursor: "pointer",
     zIndex: "9999",
+    outline: "none",
+    boxShadow: "none"
    
   });
 
   document.body.appendChild(button);
+
+  button.onfocus = () => {
+  button.style.outline = "none";
+  button.style.boxShadow = "none";
+};
 
   // IFRAME
   const iframe = document.createElement("iframe");
@@ -63,10 +73,12 @@
   iframe.style.bottom = "90px";
   iframe.style.right = "20px";
   iframe.style.borderRadius = "12px";
+  iframe.style.pointerEvents = "auto";
+iframe.style.background = "transparent";
 
 }
 
-  function applyFullScreen() {
+ function applyFullScreen() {
 
   const w = window.innerWidth;
 
@@ -76,16 +88,17 @@
     iframe.style.height = "100vh";
     iframe.style.bottom = "0";
     iframe.style.right = "0";
+    iframe.style.transform = "none";
     iframe.style.borderRadius = "0";
   }
 
-  // TABLET / DESKTOP
+  // DESKTOP / TABLET
   else {
-    iframe.style.width = "min(1100px, 95vw)";
-    iframe.style.height = "min(95vh, 900px)";
+    iframe.style.width = "min(1200px,95vw)";
+    iframe.style.height = "97vh";
     iframe.style.bottom = "50%";
     iframe.style.right = "50%";
-    iframe.style.transform = "translate(50%, 50%)";
+    iframe.style.transform = "translate(50%,50%)";
     iframe.style.borderRadius = "12px";
   }
 
@@ -143,14 +156,16 @@
   });
 
   // RESPONSIVE
-  window.addEventListener("resize", () => {
-    if (!isOpen) return;
+ window.addEventListener("resize", () => {
 
-    if (isMobile()) {
-      applyFullScreen();
-    } else if (!isExpanded) {
-      applyWidgetSize();
-    }
-  });
+  if (!isOpen) return;
+
+  if (isExpanded) {
+    applyFullScreen();
+  } else {
+    applyWidgetSize();
+  }
+
+});
 
 })();
