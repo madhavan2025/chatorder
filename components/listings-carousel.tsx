@@ -43,7 +43,7 @@ export function ListingsCarousel({
 
 useEffect(() => {
   const checkMobile = () => {
-    setIsMobile(window.innerWidth < 640); // Tailwind sm breakpoint
+    setIsMobile(window.screen.width < 640);// Tailwind sm breakpoint
   };
 
   checkMobile();
