@@ -29,6 +29,23 @@
 
     document.body.appendChild(iframe);
 
+
+    const overlay = document.createElement("div");
+
+Object.assign(overlay.style, {
+  position: "fixed",
+  top: "0",
+  left: "0",
+  width: "100vw",
+  height: "100vh",
+  background: "rgba(0,0,0,0.45)",
+  zIndex: "9998",
+  display: "none",
+  backdropFilter: "blur(2px)"
+});
+
+document.body.appendChild(overlay);
+
   // CHAT BUTTON
   const button = document.createElement("button");
   button.innerHTML = `
@@ -118,6 +135,7 @@ if (w <= 640) {
 } else {
   if (isExpanded) {
     applyFullScreen();
+    overlay.style.display = "block";
   } else {
     applyWidgetSize();
   }
@@ -126,9 +144,14 @@ if (w <= 640) {
 
   const closeChat = () => {
   iframe.style.display = "none";
+    overlay.style.display = "none";
   button.style.display = "block";
   isOpen = false;
   isExpanded = false;
+};
+
+overlay.onclick = () => {
+  closeChat();
 };
   // MESSAGE LISTENER
   window.addEventListener("message", (event) => {
@@ -140,13 +163,15 @@ if (w <= 640) {
     if (event.data?.type === "toggleExpand") {
   isExpanded = event.data.value;
 
-  if (isExpanded) {
-    applyFullScreen();
-    button.style.display = "none";   // hide icon
-  } else {
-    applyWidgetSize();
-    button.style.display = "block";  // show icon
-  }
+ if (isExpanded) {
+  applyFullScreen();
+  overlay.style.display = "block";
+  button.style.display = "none";
+} else {
+  applyWidgetSize();
+  overlay.style.display = "none";
+  button.style.display = "block";
+}
 }
 
   });
