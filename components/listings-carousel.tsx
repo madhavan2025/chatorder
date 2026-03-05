@@ -34,8 +34,9 @@ export function ListingsCarousel({
   : 1;
   const next = () => setIndex((i) => (i + visibleCount) % total);
   const prev = () => setIndex((i) => (i - visibleCount + total) % total);
-  const visibleListings = products.slice(index, index + visibleCount);
-
+  const visibleListings = Array.from({ length: visibleCount })
+  .map((_, i) => products[(index + i) % total])
+  .filter(Boolean);
 
 
 
@@ -57,9 +58,9 @@ async function fetchCart() {
     setAddedItems(cartLookup);
   }
 
-  useEffect(() => {
-    setIndex(0);
-  }, [style]);
+ useEffect(() => {
+  setIndex(0);
+}, [style, isExpanded]);
 
  
 
@@ -318,7 +319,11 @@ const renderSkeleton = () => {
   );
   };
   return (
-    <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+   <div
+  className={`mx-auto w-full px-2 pb-4 ${
+    isExpanded ? "max-w-none" : "max-w-4xl"
+  }`}
+>
     <div className="relative flex w-full flex-col gap-4">
     
       <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">

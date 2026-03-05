@@ -29,18 +29,19 @@ export default function PaymentForm({ goBack, goHome }: any) {
 
     // ✅ Expiry: MM/YY format auto-format
     if (name === "expiry") {
-      newValue = value.replace(/\D/g, "").slice(0, 4);
-      if (newValue.length >= 3) {
-        newValue = newValue.slice(0, 2) + "/" + newValue.slice(2);
-      }
+    newValue = value.replace(/\D/g, "").slice(0, 4);
+
+    if (newValue.length >= 3) {
+      newValue = newValue.slice(0, 2) + "/" + newValue.slice(2);
     }
+  }
 
     // ✅ CVV: digits only, max 4
     if (name === "cvv") {
       newValue = value.replace(/\D/g, "").slice(0, 4);
     }
 
-    setCard({ ...card, [e.target.name]: e.target.value });
+    setCard({ ...card, [name]: newValue });
   }
   
   function validate() {
