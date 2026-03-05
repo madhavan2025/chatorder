@@ -109,13 +109,11 @@ iframe.style.top = "0";
 
   // DESKTOP / TABLET
   else {
-    iframe.style.width = "min(1100px,95vw)";
-    iframe.style.height = "90vh";
+    iframe.style.width = "min(1300px,95vw)";
+    iframe.style.height = "97vh";
     iframe.style.bottom = "50%";
     iframe.style.right = "50%";
-    iframe.style.bottom = "auto";
-    iframe.style.right = "auto";
-    iframe.style.transform = "translate(-50%, -50%)";
+    iframe.style.transform = "translate(50%,50%)";
     iframe.style.borderRadius = "12px";
   }
 
