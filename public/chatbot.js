@@ -13,7 +13,7 @@
     position: "fixed",
     bottom: "90px",
     right: "20px",
-    width: "380px",
+    width: "420px",
     height: "600px",
     maxWidth: "92vw",
     maxHeight: "85vh",
@@ -28,6 +28,12 @@
   });
 
     document.body.appendChild(iframe);
+    iframe.onload = () => {
+  iframe.contentWindow?.postMessage(
+    { type: "parentExpandState", value: isExpanded },
+    "*"
+  );
+};
 
 
     const overlay = document.createElement("div");
@@ -143,12 +149,10 @@ if (w <= 640) {
   } else {
     applyWidgetSize();
   }
-}setTimeout(() => {
-    iframe.contentWindow?.postMessage(
-      { type: "parentExpandState", value: isExpanded },
-      "*"
-    );
-  }, 200);
+} iframe.contentWindow?.postMessage(
+    { type: "parentExpandState", value: isExpanded },
+    "*"
+  );
   };
 
   const closeChat = () => {
