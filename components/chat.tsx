@@ -84,7 +84,11 @@ useEffect(() => {
     }
   }
 
-  window.addEventListener("message", handleMessage);
+  window.addEventListener("message", (event) => {
+  if (event.data?.type === "parentExpandState") {
+    setIsExpanded(event.data.value);
+  }
+});
 
   return () => {
     window.removeEventListener("message", handleMessage);
