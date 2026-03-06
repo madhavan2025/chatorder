@@ -61,7 +61,7 @@ export function Chat({
 const [showCheckout, setShowCheckout] = useState(false);
       const [formConfig, setFormConfig] = useState<any>(null);
       const [contents, setContents] = useState<any[]>([]);
-   
+   const [parentWidth, setParentWidth] = useState<number | null>(null);
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
    const status: ChatStatus = "ready"; 
    const addToolApprovalResponse = async () => {};
@@ -81,18 +81,15 @@ useEffect(() => {
   function handleMessage(event: MessageEvent) {
     if (event.data?.type === "parentExpandState") {
       setIsExpanded(event.data.value);
+
+      if (event.data.screenWidth) {
+        setParentWidth(event.data.screenWidth);
+      }
     }
   }
 
-  window.addEventListener("message", (event) => {
-  if (event.data?.type === "parentExpandState") {
-    setIsExpanded(event.data.value);
-  }
-});
-
-  return () => {
-    window.removeEventListener("message", handleMessage);
-  };
+  window.addEventListener("message", handleMessage);
+  return () => window.removeEventListener("message", handleMessage);
 }, []);
 
 useEffect(() => {
@@ -231,6 +228,7 @@ if (lower.includes("show contents")) {
    <ListingsCarousel
       style={listingType}
        isExpanded={isExpanded}
+       parentWidth={parentWidth ?? window.innerWidth} 
       onViewCart={() => {
         setShowListings(false);
         setShowCart(true);

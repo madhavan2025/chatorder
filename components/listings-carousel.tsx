@@ -13,12 +13,14 @@ type ListingsCarouselProps = {
   style?: "type1" | "type2";
   onViewCart?:()=>void;
   isExpanded?: boolean;
+  parentWidth?: number;
 };
 
 export function ListingsCarousel({
   style = "type1",
   onViewCart,
   isExpanded=false,
+  parentWidth
 }: ListingsCarouselProps) {
   const [index, setIndex] = useState(0);
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
@@ -26,23 +28,19 @@ export function ListingsCarousel({
   const [products, setProducts] = useState<any[]>([]);
   const [cartItems, setCartItems] = useState<Record<string, boolean>>({});
   const total = products.length;
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-  const checkMobile = () => {
-    const width = window.innerWidth; // iframe width
-    setIsMobile(width < 640);
-  };
-
-  checkMobile();
-  window.addEventListener("resize", checkMobile);
-
-  return () => window.removeEventListener("resize", checkMobile);
-}, []);
   const [loading, setLoading] = useState(true);
-  const visibleCount = (() => {
+   const isMobile = (parentWidth ?? 1024) < 640;
+   const visibleCount = (() => {
+  // MOBILE ALWAYS 1
   if (isMobile) return 1;
+
+  // DESKTOP EXPANDED
   if (isExpanded) return 3;
+
+  // DESKTOP NORMAL
   if (style === "type2") return 2;
+
+  // Default type1
   return 1;
 })();
   const next = () => setIndex((i) => (i + visibleCount) % total);

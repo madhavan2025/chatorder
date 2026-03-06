@@ -97,7 +97,7 @@ document.body.appendChild(overlay);
 
   iframe.style.transform = "none";
 
-  iframe.style.width = "420px";
+  iframe.style.width = "380px";
   iframe.style.height = "600px";
   iframe.style.bottom = "90px";
   iframe.style.right = "20px";
