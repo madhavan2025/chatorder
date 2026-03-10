@@ -12,8 +12,8 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
     fetchCart();
   }, []);
 
-  async function fetchCart() {
-    setLoading(true);
+  async function fetchCart(options?: { skipLoading?: boolean }) {
+     if (!options?.skipLoading) setLoading(true);
     try {
       const res = await fetch(`${API}/wp-json/demo-cart/v1/cart`, {
   headers: {
@@ -25,7 +25,7 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
     } catch (error) {
       console.error("Failed to fetch cart:", error);
     } finally {
-      setLoading(false);
+      if (!options?.skipLoading) setLoading(false);
     }
   }
 
@@ -39,7 +39,7 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
   },
   body: JSON.stringify({ key: id })
 });
-    await fetchCart();
+    await fetchCart({ skipLoading: true });
     setItemLoading((prev) => ({ ...prev, [id]: false }));
   }
 
@@ -53,7 +53,7 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
   },
   body: JSON.stringify({ key: id })
 });
-    await fetchCart();
+    await fetchCart({ skipLoading: true });
     setItemLoading((prev) => ({ ...prev, [id]: false }));
   }
 
@@ -67,7 +67,7 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
   },
   body: JSON.stringify({ key: id })
 });
-   await fetchCart();
+   await fetchCart({ skipLoading: true });
    setItemLoading((prev) => ({ ...prev, [id]: false }));
   }
 
@@ -80,7 +80,23 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
 
     return sum + price * (item.quantity ?? 1);
   }, 0);
-
+ 
+  const renderItemSkeleton = () => {
+  return (
+    <div className="flex gap-4 animate-pulse mb-5">
+      <div className="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-md"></div>
+      <div className="flex-1 space-y-2">
+        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+        <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+        <div className="flex gap-2 mt-2">
+          <div className="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
   const renderCartSkeleton = () => {
     return (
       <div className="space-y-5 animate-pulse">
@@ -105,6 +121,7 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
   };
 
   return (
+    
     <div className="mx-auto w-full max-w-4xl px-2 pb-4">
       <div className="relative flex w-full flex-col gap-4">
         <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
@@ -130,8 +147,12 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
           ) : (
             <>
               {cart.map((item) => (
+                <div key={item.key}>
+    {itemLoading[item.key] ? (
+      renderItemSkeleton()
+    ) : (
+
                 <div
-                  key={item.key}
                   className="flex items-center gap-4 mb-5 relative"
                 >
                   <button
@@ -176,6 +197,8 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
                     </div>
                   </div>
                 </div>
+              )}
+              </div>
               ))}
 
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4 space-y-3 text-sm">

@@ -250,8 +250,8 @@ const renderSkeleton = () => {
 </div>
           <h4 className="mt-2 font-semibold  text-gray-900 dark:text-gray-100">{listing.title}</h4>
           <p className=" text-gray-800 dark:text-gray-100 font-bold">${listing.price}</p>
-          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 flex-1">{listing.description}</p>
-
+          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 ">{listing.description}</p>
+          <div className="mt-auto pt-2">
           {loadingItems[listing.id] ? (
   <button
     disabled
@@ -284,6 +284,7 @@ const renderSkeleton = () => {
     Add to cart
   </button>
 )}
+</div>
         </div>
   );
   })}
@@ -355,10 +356,10 @@ const renderSkeleton = () => {
            ${listing.price}
           </p>
 
-          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 flex-1">
+          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 ">
             {listing.description}
           </p>
-         
+           <div className="mt-auto pt-2">
            {loadingItems[listing.id] ? (
   <button
     disabled
@@ -390,10 +391,11 @@ const renderSkeleton = () => {
   >
     Add to cart
   </button>
-)}
+)}</div>
           </div>
         </div>
       ))}
+      
     </div>
     </div>
   );
