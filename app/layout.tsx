@@ -70,7 +70,7 @@ export default function RootLayout({
           }}
         />
       </head>
-    <body className="antialiased">
+    <body className="antialiased bg-white text-black dark:bg-gray-950 dark:text-white">
   <ThemeProvider
     attribute="class"
     defaultTheme="system"

@@ -205,9 +205,9 @@ if (lower.includes("show contents")) {
   return (
     <>
 <div
-  className="relative flex h-full min-h-0 flex-col items-center"
-> 
-<div className="flex-1 items-center w-full overflow-y-auto min-h-0 ">
+  className="relative flex h-full min-h-0 flex-col items-center bg-white text-black dark:bg-gray-900 dark:text-white"
+>
+<div className="flex-1 items-center w-full overflow-y-auto min-h-0 bg-transparent">
   <div className="mx-auto  flex flex-col">
   <Messages
     chatId={id}
@@ -289,8 +289,7 @@ if (lower.includes("show contents")) {
 
   {/* Sticky input */}
   {!isReadonly && (
-    <div className="sticky bottom-0 bg-inherit mx-auto w-full max-w-4xl  px-2 pb-4 "
-    >
+    <div className="sticky bottom-0 bg-white dark:bg-gray-900 mx-auto w-full max-w-4xl px-2 pb-4">
       <MultimodalInput
         chatId={id}
         input={input}
