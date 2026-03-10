@@ -339,14 +339,14 @@ const renderSkeleton = () => {
 }`}
 >
       {visibleListings.map((listing) => (
-       <div key={listing.id} className="transition">
+      <div key={listing.id} className="transition h-full flex flex-col">
           <img
             src={listing.image}
             alt={listing.title}
             className="w-full h-48 object-cover"
             
           />
-            <div className="p-4 flex flex-col gap-2">
+            <div className="p-4 flex flex-col gap-2 flex-1">
           <h4 className="text-sm text-gray-900 dark:text-gray-100 font-semibold line-clamp-2 min-h-[40px]">
             {listing.title}
           </h4>
