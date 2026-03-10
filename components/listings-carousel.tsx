@@ -330,12 +330,12 @@ const renderSkeleton = () => {
           />
             <div className="p-4 flex flex-col gap-2">
           <h4 className="text-sm text-gray-900 dark:text-gray-100 font-semibold line-clamp-2 min-h-[40px]">
-            ${listing.title}
+            {listing.title}
           </h4>
 
           {/* Price row aligned equal */}
           <p className="text-base text-gray-800 dark:text-gray-100 font-bold  min-h-[24px]">
-            {listing.price}
+           ${listing.price}
           </p>
 
           <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 flex-1">
