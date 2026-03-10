@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 export default function CartComponent({ goBack, goCheckout }: any) {
   const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
   const token = process.env.NEXT_PUBLIC_WP_TOKEN;
    const API = process.env.NEXT_PUBLIC_WP_API;
   useEffect(() => {
@@ -28,6 +30,7 @@ export default function CartComponent({ goBack, goCheckout }: any) {
   }
 
   async function increase(id: number) {
+     setItemLoading((prev) => ({ ...prev, [id]: true }));
     await fetch(`${API}/wp-json/demo-cart/v1/cart/increase`, {
   method: "POST",
   headers: {
@@ -36,10 +39,12 @@ export default function CartComponent({ goBack, goCheckout }: any) {
   },
   body: JSON.stringify({ key: id })
 });
-    fetchCart();
+    await fetchCart();
+    setItemLoading((prev) => ({ ...prev, [id]: false }));
   }
 
   async function decrease(id: number) {
+     setItemLoading((prev) => ({ ...prev, [id]: true }));
     await fetch(`${API}/wp-json/demo-cart/v1/cart/decrease`, {
   method: "POST",
   headers: {
@@ -48,10 +53,12 @@ export default function CartComponent({ goBack, goCheckout }: any) {
   },
   body: JSON.stringify({ key: id })
 });
-    fetchCart();
+    await fetchCart();
+    setItemLoading((prev) => ({ ...prev, [id]: false }));
   }
 
   async function removeItem(id: number) {
+     setItemLoading((prev) => ({ ...prev, [id]: true }));
     await fetch(`${API}/wp-json/demo-cart/v1/cart/remove`, {
   method: "POST",
   headers: {
@@ -60,7 +67,8 @@ export default function CartComponent({ goBack, goCheckout }: any) {
   },
   body: JSON.stringify({ key: id })
 });
-    fetchCart();
+   await fetchCart();
+   setItemLoading((prev) => ({ ...prev, [id]: false }));
   }
 
   const total = cart.reduce((sum, item) => {
@@ -198,12 +206,20 @@ export default function CartComponent({ goBack, goCheckout }: any) {
               </div>
 
               <div className="flex gap-4 mt-6">
-                <button
-                  onClick={goCheckout}
-                  className="bg-blue-700 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-900 transition"
-                >
-                  Checkout
-                </button>
+               <button
+  onClick={() => {
+    setActionLoading(true);
+    goCheckout();
+  }}
+  disabled={actionLoading}
+  className={`px-4 py-2 rounded transition 
+    ${actionLoading
+      ? "bg-gray-400 text-white cursor-not-allowed"
+      : "bg-blue-700 text-white hover:bg-blue-900"
+    }`}
+>
+  {actionLoading ? "Loading..." : "Checkout"}
+</button>
 
                 <button
                   onClick={goBack}

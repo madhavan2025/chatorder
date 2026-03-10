@@ -11,6 +11,7 @@ export default function PaymentForm({ goBack, goHome ,orderId}: any) {
   
   const [errors, setErrors] = useState<any>({});
   const [localOrderId, setOrderId] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const token = process.env.NEXT_PUBLIC_WP_TOKEN;
    const API = process.env.NEXT_PUBLIC_WP_API;
   function handleChange(e: any) {
@@ -69,25 +70,36 @@ export default function PaymentForm({ goBack, goHome ,orderId}: any) {
 
  
 
-  async function handleSubmit(e: any) {
-    e.preventDefault();
-       if (!validate()) return;
-   const res= await fetch(  `${API}/wp-json/demo-cart/v1/payment`, {
-       method: "POST", 
-       headers: {
+ async function handleSubmit(e: any) {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  setPaymentLoading(true);
+
+  try {
+    const res = await fetch(`${API}/wp-json/demo-cart/v1/payment`, {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({order_id:orderId}),
+      body: JSON.stringify({ order_id: orderId }),
     });
-     const data = await res.json();
-      if (data.success) {
-      // ✅ Show success page
+
+    const data = await res.json();
+
+    if (data.success) {
       setOrderId(data.order_id);
-    
-  }else {
+    } else {
       alert(data.message || "Payment failed");
-    }}
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setPaymentLoading(false);
+  }
+}
 
   /* ---------------- SUCCESS SCREEN ---------------- */
   if (localOrderId) {
@@ -123,7 +135,7 @@ export default function PaymentForm({ goBack, goHome ,orderId}: any) {
     <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
     <div className="relative flex w-full flex-col gap-4">
     
-      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
+      <div className="w-full overflow-hidden shadow-xs  p-3">
     <form onSubmit={handleSubmit} className="space-y-6">
       
       <h3 className="font-semibold mb-3 text-gray-900 dark:text-gray-100">
@@ -189,12 +201,17 @@ export default function PaymentForm({ goBack, goHome ,orderId}: any) {
       </div>
 
       <div className="flex gap-4 pt-4">
-        <button
-          type="submit"
-          className="bg-blue-700 cursor-pointer text-white px-6 py-2 rounded hover:bg-blue-900  transition"
-        >
-          Make Payment
-        </button>
+     <button
+  type="submit"
+  disabled={paymentLoading}
+  className={`px-6 py-2 rounded transition 
+  ${paymentLoading 
+    ? "bg-gray-400 text-white cursor-not-allowed" 
+    : "bg-blue-700 text-white hover:bg-blue-900"
+  }`}
+>
+  {paymentLoading ? "Processing Payment..." : "Make Payment"}
+</button>
 
         <button
           type="button"

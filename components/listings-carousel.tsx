@@ -29,6 +29,7 @@ export function ListingsCarousel({
   const [cartItems, setCartItems] = useState<Record<string, boolean>>({});
   const total = products.length;
   const [loading, setLoading] = useState(true);
+  const [loadingItems, setLoadingItems] = useState<Record<string, boolean>>({});
    const isMobile = (parentWidth ?? 1024) < 640;
     const token = process.env.NEXT_PUBLIC_WP_TOKEN;
    const API = process.env.NEXT_PUBLIC_WP_API;
@@ -102,6 +103,7 @@ async function fetchCart() {
 
 const handleAddToCart = async (listing: any) => {
   try {
+    setLoadingItems((prev) => ({ ...prev, [listing.id]: true }));
     const res = await fetch(`${API}/wp-json/demo-cart/v1/cart/add`, {
       method: "POST",
       headers: {
@@ -118,18 +120,23 @@ const handleAddToCart = async (listing: any) => {
       throw new Error("Failed to add to cart");
     }
 
-    const data = await res.json();
+     await res.json();
+     setLoadingItems((prev) => ({ ...prev, [listing.id]: false }));
+    
+     
+      setJustAdded((prev) => ({ ...prev, [listing.id]: true }));
 
-    setJustAdded((prev) => ({ ...prev, [listing.id]: true }));
-
-    setTimeout(() => {
-      setJustAdded((prev) => ({ ...prev, [listing.id]: false }));
-      setAddedItems((prev) => ({ ...prev, [listing.id]: true }));
-    }, 2000);
+      setTimeout(() => {
+        setJustAdded((prev) => ({ ...prev, [listing.id]: false }));
+        setAddedItems((prev) => ({ ...prev, [listing.id]: true }));
+      }, 1000);
+   
 
   } catch (error) {
     console.error("Add to cart error:", error);
-  }
+    setLoadingItems((prev) => ({ ...prev, [listing.id]: false }));
+
+  } 
 };
     
 
@@ -245,28 +252,38 @@ const renderSkeleton = () => {
           <p className=" text-gray-800 dark:text-gray-100 font-bold">${listing.price}</p>
           <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 flex-1">{listing.description}</p>
 
-          {justAdded[listing.id] ? (
-            <button
-              disabled
-              className="mt-2 self-start bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
-            >
-              Added ✓
-            </button>
-          ) : addedItems[listing.id] ? (
-            <button
-               onClick={() => onViewCart?.()}
-              className="mt-2 self-start text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
-            >
-              View cart
-            </button>
-          ) : (
-            <button
-              onClick={() => handleAddToCart(listing)}
-              className=" mt-2 self-start bg-blue-600 hover:bg-blue-700  text-white py-2 px-4 rounded-md cursor-pointer"
-            >
-              Add to cart
-            </button>
-          )}
+          {loadingItems[listing.id] ? (
+  <button
+    disabled
+    className="mt-2 self-start bg-gray-400 text-white py-2 px-4 rounded-md cursor-not-allowed"
+  >
+    Adding...
+  </button>
+
+) : justAdded[listing.id] ? (
+  <button
+    disabled
+    className="mt-2 self-start bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
+  >
+    Added ✓
+  </button>
+
+) : addedItems[listing.id] ? (
+  <button
+    onClick={() => onViewCart?.()}
+    className="mt-2 self-start text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
+  >
+    View cart
+  </button>
+
+) : (
+  <button
+    onClick={() => handleAddToCart(listing)}
+    className="mt-2 self-start bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer"
+  >
+    Add to cart
+  </button>
+)}
         </div>
   );
   })}
@@ -342,24 +359,34 @@ const renderSkeleton = () => {
             {listing.description}
           </p>
          
-              {justAdded[listing.id] ? (
+           {loadingItems[listing.id] ? (
   <button
     disabled
-    className="mt-2 bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed self-start"
+    className="mt-2 self-start bg-gray-400 text-white py-2 px-4 rounded-md cursor-not-allowed"
+  >
+    Adding...
+  </button>
+
+) : justAdded[listing.id] ? (
+  <button
+    disabled
+    className="mt-2 self-start bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
   >
     Added ✓
   </button>
+
 ) : addedItems[listing.id] ? (
   <button
     onClick={() => onViewCart?.()}
-    className="mt-2 text-xs underline text-blue-600 d hover:text-blue-700 cursor-pointer self-start"
+    className="mt-2 self-start text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
   >
     View cart
   </button>
+
 ) : (
   <button
     onClick={() => handleAddToCart(listing)}
-    className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-md cursor-pointer self-start"
+    className="mt-2 self-start bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer"
   >
     Add to cart
   </button>

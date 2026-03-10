@@ -7,6 +7,7 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
   const [cart, setCart] = useState<any[]>([]);
 const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<any>({});
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -113,6 +114,7 @@ const tax = subtotal * taxRate;
 const total = subtotal + tax;
 
 async function handleCheckout() {
+  setCheckoutLoading(true);
   const billing = {
     first_name: form.firstName,
     last_name: form.lastName,
@@ -144,10 +146,12 @@ async function handleCheckout() {
       // Always go to payment page
       setStep("payment");
     } else {
-      alert(data.message || "Checkout failed");
+      console.log(data.message || "Checkout failed");
     }
   } catch (err) {
     console.error(err);
+  }finally {
+    setCheckoutLoading(false);
   }
 }
 
@@ -407,12 +411,17 @@ const renderOrderSummarySkeleton = () => {
 
             {/* -------- BUTTONS -------- */}
             <div className="flex gap-4 pt-4">
-              <button
-                type="submit"
-                className="bg-blue-700 cursor-pointer text-white px-6 py-2 rounded hover:bg-blue-900 transition"
-              >
-                Proceed to Payment
-              </button>
+             <button
+  type="submit"
+  disabled={checkoutLoading}
+  className={`px-6 py-2 rounded transition 
+    ${checkoutLoading 
+      ? "bg-gray-400 text-white cursor-not-allowed" 
+      : "bg-blue-700 text-white hover:bg-blue-900"
+    }`}
+>
+  {checkoutLoading ? "Processing..." : "Proceed to Payment"}
+</button>
 
               <button
                 type="button"
