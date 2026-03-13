@@ -9,6 +9,11 @@ import { DocumentToolResult } from "./document";
 import { DocumentPreview } from "./document-preview";
 import { MessageContent } from "./elements/message";
 import { Response } from "./elements/response";
+import { ListingsCarousel } from "@/components/listings-carousel";
+import CartComponent from "./Cart";
+import CheckoutComponent from "./Checkout";
+import { ContentListing } from "./ContentListing";
+import { MiniForm } from "./MiniForm";
 import {
   Tool,
   ToolContent,
@@ -23,6 +28,7 @@ import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
 
+
 const PurePreviewMessage = ({
   addToolApprovalResponse,
   chatId,
@@ -33,6 +39,8 @@ const PurePreviewMessage = ({
   regenerate,
   isReadonly,
   requiresScrollPadding: _requiresScrollPadding,
+  isExpanded,
+  formConfig,
 }: {
   addToolApprovalResponse: UseChatHelpers<ChatMessage>["addToolApprovalResponse"];
   chatId: string;
@@ -43,9 +51,13 @@ const PurePreviewMessage = ({
   regenerate: UseChatHelpers<ChatMessage>["regenerate"];
   isReadonly: boolean;
   requiresScrollPadding: boolean;
+  sendMessage: (message: any) => void;
+  isExpanded?: boolean;
+  formConfig?: any;
+contents?: any[];
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
-
+const [listingView, setListingView] = useState<"products" | "cart" | "checkout">("products");
   const attachmentsFromMessage = message.parts.filter(
     (part) => part.type === "file"
   );
@@ -344,7 +356,64 @@ const PurePreviewMessage = ({
                 </Tool>
               );
             }
+     if (type === "data-listing") {
+  const listing = part as {
+    type: "data-listing";
+    data: {
+      style: "type1" | "type2";
+    };
+  };
 
+  return (
+    <div className="w-full" key={key}>
+      {listingView === "products" && (
+        <ListingsCarousel
+          style={listing.data.style}
+          isExpanded={isExpanded}
+          parentWidth={
+            typeof window !== "undefined" ? window.innerWidth : 1024
+          }
+          onViewCart={() => {
+            setListingView("cart");
+          }}
+        />
+      )}
+
+        {listingView === "cart" && (
+        <CartComponent
+          goBack={() => setListingView("products")}
+          goCheckout={() => setListingView("checkout")}
+        />
+      )}
+
+      {listingView === "checkout" && (
+        <CheckoutComponent
+          goBack={() => setListingView("cart")}
+           goHome={() => setListingView("products")} 
+        />
+      )}
+    </div>
+  );
+}
+if (type === "data-contents") {
+  return (
+    <ContentListing
+      items={(part.data?.items ?? []).map((item: any, i: number) => ({
+        id: item.id ?? `content-${i}`,
+        title: item.title,
+        description: item.description
+      }))}
+      count={(part.data?.items ?? []).length}
+    />
+  );
+}
+
+if (type === "data-form") {
+  return (
+    <MiniForm config={formConfig} />
+  );
+}
+    
             return null;
           })}
 

@@ -45,26 +45,49 @@ export type ChatTools = {
 };
 
 export type CustomUIDataTypes = {
-  listing: {
-    heading: string;
-    items: CarouselItem[];
+  text: string; // normal assistant/user text
+  listing: { style: "type1" | "type2"; items?: CarouselItem[] }; // our listing carousel
+  cart: null; // cart UI
+  checkout: null; // checkout UI
+  contents: {
+    items: {
+      id?: string;
+      title: string;
+      description?: string;
+      image?: string;
+      url?: string;
+    }[];
   };
-  textDelta: string;
-  imageDelta: string;
-  sheetDelta: string;
-  codeDelta: string;
-  suggestion: Suggestion;
-  appendMessage: string;
-  id: string;
-  title: string;
-  kind: ArtifactKind;
-  clear: null;
-  finish: null;
-  "chat-title": string;
-  carousel?: { items: CarouselItem[] };
-  buttons?: { label: string; value: string }[];
+
+  /* FORM (NEW) */
+  form: {
+    id?: string;
+    title?: string;
+    fields?: {
+      name: string;
+      label: string;
+      type: "text" | "email" | "textarea" | "select";
+      required?: boolean;
+      options?: string[];
+    }[];
+  };
+  buttons?: { label: string; value: string }[]; // buttons
+  appendMessage?: string;
   image?: { url: string; alt?: string };
+  suggestion?: Suggestion;
+  sheetDelta?: string;
+  codeDelta?: string;
+  imageDelta?: string;
+  textDelta?: string;
+  id?: string;
+  title?: string;
+  kind?: ArtifactKind;
+  clear?: null;
+  finish?: null;
+  "chat-title"?: string;
+  carousel?: { items: CarouselItem[] };
 };
+
 
 export type ChatMessage = UIMessage<
   MessageMetadata,

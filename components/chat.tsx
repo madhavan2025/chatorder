@@ -4,10 +4,7 @@ import { useState,useEffect } from "react";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { VisibilityType } from "./visibility-selector";
 import { ChatStatus } from "ai";
-import CartComponent from "./Cart";
-import { ListingsCarousel } from "@/components/listings-carousel";
-import { ContentListing } from "../components/ContentListing";
-import { MiniForm } from "./MiniForm";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import CheckoutComponent from "./Checkout";
+
 import { Artifact } from "./artifact";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
@@ -42,6 +39,7 @@ export function Chat({
   isReadonly,
   isExpanded: initialExpanded = false,
 
+
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -55,13 +53,8 @@ export function Chat({
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [showListings, setShowListings] = useState(false);
-  const [showContentList, setShowContentList] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-     const [showCart, setShowCart] = useState(false);
-const [showCheckout, setShowCheckout] = useState(false);
-      const [formConfig, setFormConfig] = useState<any>(null);
-      const [contents, setContents] = useState<any[]>([]);
+   const [formConfig, setFormConfig] = useState<any>(null);
+  const [contents, setContents] = useState<any[]>([]);
    const [parentWidth, setParentWidth] = useState<number | null>(null);
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
    const status: ChatStatus = "ready"; 
@@ -121,6 +114,7 @@ useEffect(() => {
     ]);
   };
 
+  
  const sendMessage = async (
   message?: {
     role?: "user" | "assistant" | "system";
@@ -153,57 +147,95 @@ useEffect(() => {
     },
   ]);
    
-  const resetAllViews = () => {
-  setShowListings(false);
-  setShowContentList(false);
-  setShowForm(false);
-  setShowCart(false);
-  setShowCheckout(false);
- 
-};
+
  if (lower.includes("show products type1")) {
-   resetAllViews();
-  setListingType("type1");
-  setShowListings(true);
-  addAssistantMessage("Here is a product you might like 👇");
+  setMessages((prev) => [
+    ...prev,
+    {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      parts: [
+        { type: "text", text: "Here is a product you might like 👇" },
+        {
+          type: "data-listing",
+          data: {
+            style: "type1"
+          }
+        }
+      ]
+    }
+  ]);
   return;
 }
 
 if (lower.includes("show products type2")) {
-   resetAllViews();
-  setListingType("type2");
-  setShowListings(true);
-  addAssistantMessage("Here are some products you might like 👇");
+  setMessages((prev) => [
+    ...prev,
+    {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      parts: [
+        { type: "text", text: "Here are some products you might like 👇" },
+        {
+          type: "data-listing",
+          data: {
+            style: "type2"
+          }
+        }
+      ]
+    }
+  ]);
   return;
 }
+
 
 if (lower.includes("show contents")) {
-   resetAllViews();
-  setShowContentList(true);
-  addAssistantMessage("Here are some contents 👇");
+  setMessages((prev) => [
+    ...prev,
+    {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      parts: [
+        { type: "text", text: "Here are some contents 👇" },
+        {
+          type: "data-contents",
+          data: {
+            items: contents.map((item: any, i: number) => ({
+              id: item.id ?? `content-${i}`,
+              title: item.title,
+              description: item.description ?? ""
+            }))
+          }
+        }
+      ]
+    }
+  ]);
+
   return;
 }
   
-   if (
-  lower.includes("show") &&
-  (lower.includes("form") || lower.includes("forms"))
-) {
-   resetAllViews();
-  setShowForm(true);
-  addAssistantMessage("Here is the form 👇");
+  if (lower.includes("show") && (lower.includes("form") || lower.includes("forms"))) {
+ setMessages((prev) => [
+    ...prev,
+    {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      parts: [
+        { type: "text", text: "Here is the form 👇" },
+        {
+          type: "data-form",
+          data: {
+            id: "contactForm"
+          }
+        }
+      ]
+    }
+  ]);
   return;
 }
 
-
-    if (lower.includes("recommend")) setShowContentList(true);
-
-  if (lower.includes("hide") || lower.includes("close")) {
-     resetAllViews();
-    addAssistantMessage("I’ve hidden the carosels. What would you like to do next?");
-    return;
-  }
   
-   resetAllViews();
+  
   addAssistantMessage("Hi 😊 What can I help you with today?");
 };
   return (
@@ -222,70 +254,14 @@ if (lower.includes("show contents")) {
     status={status}
     addToolApprovalResponse={addToolApprovalResponse}
     votes={votes}
+   sendMessage={sendMessage}
     regenerate={regenerate}
+    isExpanded={isExpanded}
+     formConfig={formConfig}   // ✅ ADD THIS
+  contents={contents} 
    
   />
 
-
-{showListings && listingType && !showCart && !showCheckout && (
-  
-   <ListingsCarousel
-      style={listingType}
-       isExpanded={isExpanded}
-       parentWidth={parentWidth ?? window.innerWidth} 
-      onViewCart={() => {
-        setShowListings(false);
-        setShowCart(true);
-      }}
-    />
-   
-)}
-
-{showCart && (
-  
-    <CartComponent
-      goBack={() => {
-        setShowCart(false);
-        setShowListings(true);
-      }}
-      goCheckout={() => {
-        setShowCart(false);
-        setShowCheckout(true);
-      }}
-    />
-  
-)}
-
-{showCheckout && (
-  
-    <CheckoutComponent
-      goBack={() => {
-        setShowCheckout(false);
-        setShowCart(true);
-      }}
-      goHome={() => {
-        setShowCheckout(false);
-        setShowCart(false);
-        setShowListings(true);
-        
-      }}
-    />
-  
-)}
-
-
-{showContentList && (
-   
-  <ContentListing
-    items={contents}
-    count={contents.length}
-  />
-  
-)}
-   {showForm && formConfig &&( 
-            
-            <MiniForm config={formConfig} />
-            )}
      </div>
 </div>
     

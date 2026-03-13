@@ -17,7 +17,14 @@ type MessagesProps = {
   regenerate: UseChatHelpers<ChatMessage>["regenerate"];
   isReadonly: boolean;
   isArtifactVisible: boolean;
-
+  sendMessage: (message: {
+    role?: "user" | "assistant" | "system";
+    parts?: ChatMessage["parts"];
+    text?: string;
+  }) => void;
+ isExpanded?: boolean; 
+ formConfig?: any;
+contents?: any[];
 };
 
 function PureMessages({
@@ -29,6 +36,10 @@ function PureMessages({
   setMessages,
   regenerate,
   isReadonly,
+  sendMessage,
+  isExpanded,
+  formConfig,
+  contents
  
 }: MessagesProps) {
   const {
@@ -67,6 +78,10 @@ function PureMessages({
                 hasSentMessage && index === messages.length - 1
               }
               setMessages={setMessages}
+              sendMessage={sendMessage}
+              isExpanded={isExpanded}
+               formConfig={formConfig}
+              contents={contents}
               vote={
                 votes
                   ? votes.find((vote) => vote.messageId === message.id)

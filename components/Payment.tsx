@@ -114,7 +114,7 @@ export default function PaymentForm({ goBack, goHome ,orderId}: any) {
       <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
     <div className="relative flex w-full flex-col gap-4">
     
-      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
+      <div className="w-full overflow-hidden shadow-xs  p-3">
       <div className="text-center py-10">
         <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
           Order #{orderId}
