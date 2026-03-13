@@ -50,14 +50,14 @@ export type CustomUIDataTypes = {
   cart: null; // cart UI
   checkout: null; // checkout UI
   contents: {
-    items: {
-      id?: string;
-      title: string;
-      description?: string;
-      image?: string;
-      url?: string;
-    }[];
-  };
+  items: {
+    id: string;
+    title: string;
+    description?: string;
+    image?: string;
+    url?: string;
+  }[];
+};
 
   /* FORM (NEW) */
   form: {

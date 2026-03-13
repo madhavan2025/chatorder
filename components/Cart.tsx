@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { TrashIcon } from "./icons";
 
 export default function CartComponent({ goBack, goCheckout }: any) {
   const [cart, setCart] = useState<any[]>([]);
@@ -146,12 +147,7 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
                 <div
                   className="flex items-center gap-4 mb-5 relative"
                 >
-                  <button
-                    onClick={() => removeItem(item._id)}
-                    className="absolute cursor-pointer top-0 right-0 text-gray-400 dark:text-gray-300 hover:text-red-500 transition text-lg"
-                  >
-                    ✕
-                  </button>
+                  
 
                   <img
                     src={item.image}
@@ -186,6 +182,12 @@ const [itemLoading, setItemLoading] = useState<Record<number, boolean>>({});
                       >
                         +
                       </button>
+                      <button
+        onClick={() => removeItem(item._id)}
+        className="ml-3 cursor-pointer text-red-500 hover:text-red-700 transition"
+      >
+        <TrashIcon size={20} /> 
+      </button>
                     </div>
                   </div>
                 </div>
