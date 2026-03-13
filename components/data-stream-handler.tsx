@@ -7,7 +7,7 @@ import { initialArtifactData, useArtifact } from "@/hooks/use-artifact";
 import { artifactDefinitions } from "./artifact";
 import { useDataStream } from "./data-stream-provider";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
-
+import type { UIArtifact } from "./artifact";
 export function DataStreamHandler() {
   const { dataStream, setDataStream } = useDataStream();
   const { mutate } = useSWRConfig();
@@ -41,50 +41,49 @@ export function DataStreamHandler() {
         });
       }
 
-      setArtifact((draftArtifact) => {
-        if (!draftArtifact) {
-          return { ...initialArtifactData, status: "streaming" };
-        }
+     setArtifact((draftArtifact) => {
+  const baseArtifact: UIArtifact =
+    draftArtifact ?? { ...initialArtifactData, status: "streaming" };
 
-        switch (delta.type) {
-          case "data-id":
-            return {
-              ...draftArtifact,
-              documentId: delta.data,
-              status: "streaming",
-            };
+  switch (delta.type) {
+    case "data-id":
+      return {
+        ...baseArtifact,
+        documentId: delta.data,
+        status: "streaming",
+      } as UIArtifact;
 
-          case "data-title":
-            return {
-              ...draftArtifact,
-              title: delta.data,
-              status: "streaming",
-            };
+    case "data-title":
+      return {
+        ...baseArtifact,
+        title: delta.data,
+        status: "streaming",
+      } as UIArtifact;
 
-          case "data-kind":
-            return {
-              ...draftArtifact,
-              kind: delta.data,
-              status: "streaming",
-            };
+    case "data-kind":
+      return {
+        ...baseArtifact,
+        kind: delta.data,
+        status: "streaming",
+      } as UIArtifact;
 
-          case "data-clear":
-            return {
-              ...draftArtifact,
-              content: "",
-              status: "streaming",
-            };
+    case "data-clear":
+      return {
+        ...baseArtifact,
+        content: "",
+        status: "streaming",
+      } as UIArtifact;
 
-          case "data-finish":
-            return {
-              ...draftArtifact,
-              status: "idle",
-            };
+    case "data-finish":
+      return {
+        ...baseArtifact,
+        status: "idle",
+      } as UIArtifact;
 
-          default:
-            return draftArtifact;
-        }
-      });
+    default:
+      return baseArtifact;
+  }
+});
     }
   }, [dataStream, setArtifact, setMetadata, artifact, setDataStream, mutate]);
 
