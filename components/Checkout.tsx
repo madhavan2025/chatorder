@@ -8,6 +8,19 @@ export default function CheckoutComponent({ goBack, goHome }: any) {
 const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<any>({});
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [sameAsBilling, setSameAsBilling] = useState(true);
+
+const [shipping, setShipping] = useState({
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  state: "",
+  zip: "",
+  country: "",
+});
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -27,7 +40,20 @@ const [loading, setLoading] = useState(true);
     fetchCart();
   }, []);
 
- 
+ useEffect(() => {
+  if (sameAsBilling) {
+    setShipping(form);
+  }
+}, [form, sameAsBilling]);
+
+function handleShippingChange(e: any) {
+  const { name, value } = e.target;
+
+  setShipping((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+}
 
   async function fetchCart() {
     setLoading(true);
@@ -111,19 +137,29 @@ const total = subtotal + tax;
 
 async function handleCheckout() {
   setCheckoutLoading(true);
-  const billing = {
-    first_name: form.firstName,
-    last_name: form.lastName,
-    email: form.email,
-    phone: form.phone,
-    address_1: form.address,
-    city: form.city,
-    state: form.state,
-    postcode: form.zip,
-    country: form.country,
-  };
+ const billing = {
+  first_name: form.firstName,
+  last_name: form.lastName,
+  email: form.email,
+  phone: form.phone,
+  address_1: form.address,
+  city: form.city,
+  state: form.state,
+  postcode: form.zip,
+  country: form.country,
+};
 
-  const shipping = billing; // same as billing
+const shippingData = sameAsBilling
+  ? billing
+  : {
+      first_name: shipping.firstName,
+      last_name: shipping.lastName,
+      address_1: shipping.address,
+      city: shipping.city,
+      state: shipping.state,
+      postcode: shipping.zip,
+      country: shipping.country,
+    };
 
   try {
     const res = await fetch(`${API}/wp-json/wc/v3/checkout`, {
@@ -134,7 +170,7 @@ async function handleCheckout() {
       },
       body: JSON.stringify({
          billing, 
-         shipping,
+         shipping:shippingData,
           payment_method: "card",
           items:cart
          }),
@@ -409,6 +445,85 @@ const renderOrderSummarySkeleton = () => {
   </p>
 )}
             </div>
+            <div className="flex items-center gap-2 mt-4">
+  <input
+    type="checkbox"
+    checked={sameAsBilling}
+    onChange={(e) => setSameAsBilling(e.target.checked)}
+  />
+
+  <label className="text-sm text-gray-700 dark:text-gray-300">
+    Shipping same as billing details
+  </label>
+</div>
+
+{!sameAsBilling && (
+  <div className="mt-6">
+    <h3 className="font-semibold mb-4 text-gray-900 dark:text-gray-100">
+      Shipping Information
+    </h3>
+
+    <div className="grid grid-cols-2 gap-4">
+      <input
+        name="firstName"
+        placeholder="First Name"
+        value={shipping.firstName}
+        onChange={handleShippingChange}
+        className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+      />
+
+      <input
+        name="lastName"
+        placeholder="Last Name"
+        value={shipping.lastName}
+        onChange={handleShippingChange}
+        className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+      />
+    </div>
+
+    <input
+      name="address"
+      placeholder="Street Address"
+      value={shipping.address}
+      onChange={handleShippingChange}
+      className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+    />
+
+    <div className="grid grid-cols-3 gap-4 mt-4">
+      <input
+        name="city"
+        placeholder="City"
+        value={shipping.city}
+        onChange={handleShippingChange}
+        className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+      />
+
+      <input
+        name="state"
+        placeholder="State"
+        value={shipping.state}
+        onChange={handleShippingChange}
+        className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+      />
+
+      <input
+        name="zip"
+        placeholder="ZIP"
+        value={shipping.zip}
+        onChange={handleShippingChange}
+        className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+      />
+    </div>
+
+    <input
+      name="country"
+      placeholder="Country"
+      value={shipping.country}
+      onChange={handleShippingChange}
+      className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded w-full mt-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+    />
+  </div>
+)}
 
             {/* -------- BUTTONS -------- */}
             <div className="flex gap-4 pt-4">

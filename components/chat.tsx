@@ -67,7 +67,7 @@ const [isExpanded, setIsExpanded] = useState(initialExpanded);
 useEffect(() => {
   setIsExpanded(initialExpanded);
 }, [initialExpanded]);
-const [listingType, setListingType] = useState<"type1" | "type2" | null>(null);
+
 
   /* ---------------- NO-OP UI HANDLERS ---------------- */
 
@@ -148,7 +148,7 @@ useEffect(() => {
   ]);
    
 
- if (lower.includes("show products type1")) {
+ if (lower.includes("show products")) {
   setMessages((prev) => [
     ...prev,
     {
@@ -158,9 +158,7 @@ useEffect(() => {
         { type: "text", text: "Here is a product you might like 👇" },
         {
           type: "data-listing",
-          data: {
-            style: "type1"
-          }
+          data: {}
         }
       ]
     }
@@ -168,25 +166,7 @@ useEffect(() => {
   return;
 }
 
-if (lower.includes("show products type2")) {
-  setMessages((prev) => [
-    ...prev,
-    {
-      id: crypto.randomUUID(),
-      role: "assistant",
-      parts: [
-        { type: "text", text: "Here are some products you might like 👇" },
-        {
-          type: "data-listing",
-          data: {
-            style: "type2"
-          }
-        }
-      ]
-    }
-  ]);
-  return;
-}
+
 
 
 if (lower.includes("show contents")) {

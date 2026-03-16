@@ -8,16 +8,15 @@ type Listing = {
   price: string;
   image: string;
   description: string;
+  link:string
 };
 type ListingsCarouselProps = {
-  style?: "type1" | "type2";
   onViewCart?:()=>void;
   isExpanded?: boolean;
   parentWidth?: number;
 };
 
 export function ListingsCarousel({
-  style = "type1",
   onViewCart,
   isExpanded=false,
   parentWidth
@@ -32,16 +31,8 @@ export function ListingsCarousel({
   const [loadingItems, setLoadingItems] = useState<Record<string, boolean>>({});
    const isMobile = (parentWidth ?? 1024) < 640;
    const visibleCount = (() => {
-  // MOBILE ALWAYS 1
   if (isMobile) return 1;
-
-  // DESKTOP EXPANDED
   if (isExpanded) return 3;
-
-  // DESKTOP NORMAL
-  if (style === "type2") return 2;
-
-  // Default type1
   return 1;
 })();
   const next = () => setIndex((i) => (i + visibleCount) % total);
@@ -85,7 +76,7 @@ async function fetchCart() {
 
  useEffect(() => {
   setIndex(0);
-}, [style, isExpanded,isMobile]);
+}, [ isExpanded,isMobile]);
 
  
 
@@ -147,8 +138,6 @@ const renderSkeleton = () => {
       className={`grid gap-4 ${
         visibleCount === 3
           ? "grid-cols-3"
-          : visibleCount === 2
-          ? "grid-cols-2"
           : "grid-cols-1"
       }`}
     >
@@ -166,12 +155,10 @@ const renderSkeleton = () => {
 
   
 
-  const renderType1 = () => {
+  const renderType = () => {
     const gridCols =
     visibleCount === 3
       ? "grid-cols-3"
-      : visibleCount === 2
-      ? "grid-cols-2"
       : "grid-cols-1";
       return (
     <div className={`grid gap-4 ${gridCols}`}>
@@ -188,7 +175,7 @@ const renderSkeleton = () => {
           <img
             src={listing.image}
             alt={listing.title}
-            className="w-full h-64 object-cover rounded-md "
+            className="w-full aspect-[4/3] object-cover rounded-md"
             
           />
           
@@ -233,39 +220,50 @@ const renderSkeleton = () => {
           <h4 className="mt-2 font-semibold  text-gray-900 dark:text-gray-100">{listing.title}</h4>
           <p className=" text-gray-800 dark:text-gray-100 font-bold">${listing.price}</p>
           <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 ">{listing.description}</p>
-          <div className="mt-auto pt-2">
-          {loadingItems[listing._id] ? (
+          <div className="mt-auto pt-2 flex gap-3">
+  
   <button
-    disabled
-    className="mt-2 self-start bg-gray-400 text-white py-2 px-4 rounded-md cursor-not-allowed"
+    onClick={() => window.open(listing.link, "_blank")}
+    className="flex-1 bg-gray-200 hover:bg-gray-300 cursor-pointer 
+    dark:bg-gray-700 dark:hover:bg-gray-600 
+    text-gray-900 dark:text-white py-2 px-3 rounded-md text-sm"
   >
-    Adding...
+    View Product
   </button>
 
-) : justAdded[listing._id] ? (
-  <button
-    disabled
-    className="mt-2 self-start bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
-  >
-    Added ✓
-  </button>
+  {loadingItems[listing._id] ? (
+    <button
+      disabled
+      className="flex-1 bg-gray-400 text-white py-2 px-3 rounded-md cursor-not-allowed"
+    >
+      Adding...
+    </button>
 
-) : addedItems[listing._id] ? (
-  <button
-    onClick={() => onViewCart?.()}
-    className="mt-2 self-start text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
-  >
-    View cart
-  </button>
+  ) : justAdded[listing._id] ? (
+    <button
+      disabled
+      className="flex-1 bg-green-600 text-white py-2 px-3 rounded-md cursor-not-allowed"
+    >
+      Added ✓
+    </button>
 
-) : (
-  <button
-    onClick={() => handleAddToCart(listing)}
-    className="mt-2 self-start bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer"
-  >
-    Add to cart
-  </button>
-)}
+  ) : addedItems[listing._id] ? (
+    <button
+      onClick={() => onViewCart?.()}
+      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-md"
+    >
+      View Cart
+    </button>
+
+  ) : (
+    <button
+      onClick={() => handleAddToCart(listing)}
+      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-md"
+    >
+      Add to Cart
+    </button>
+  )}
+
 </div>
         </div>
   );
@@ -274,127 +272,16 @@ const renderSkeleton = () => {
   );
 }
 
-  const renderType2 = () => {
-  return(
-     <div className="relative group ">
-       <button
-    onClick={prev}
-    className="absolute left-2 top-20 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition cursor-pointer"
-    aria-label="Previous"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-8 w-8 text-white drop-shadow-lg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-    </svg>
-  </button>
-
-  {/* Next */}
-  <button
-    onClick={next}
-    className="absolute right-2 top-20 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition cursor-pointer"
-    aria-label="Next"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-8 w-8 text-white drop-shadow-lg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
-  </button>
-    <div
- className={`grid gap-4 ${
-  visibleCount === 3
-    ? "grid-cols-3"
-    : visibleCount === 2
-    ? "grid-cols-2"
-    : "grid-cols-1"
-}`}
->
-      {visibleListings.map((listing) => (
-      <div key={listing._id} className="transition h-full flex flex-col">
-          <img
-            src={listing.image}
-            alt={listing.title}
-            className="w-full h-48 object-cover"
-            
-          />
-            <div className="p-4 flex flex-col gap-2 flex-1">
-          <h4 className="text-sm text-gray-900 dark:text-gray-100 font-semibold line-clamp-2 min-h-[40px]">
-            {listing.title}
-          </h4>
-
-          {/* Price row aligned equal */}
-          <p className="text-base text-gray-800 dark:text-gray-100 font-bold  min-h-[24px]">
-           ${listing.price}
-          </p>
-
-          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 ">
-            {listing.description}
-          </p>
-           <div className="mt-auto pt-2">
-           {loadingItems[listing._id] ? (
-  <button
-    disabled
-    className="mt-2 self-start bg-gray-400 text-white py-2 px-4 rounded-md cursor-not-allowed"
-  >
-    Adding...
-  </button>
-
-) : justAdded[listing._id] ? (
-  <button
-    disabled
-    className="mt-2 self-start bg-green-600 text-white py-2 px-4 rounded-md cursor-not-allowed"
-  >
-    Added ✓
-  </button>
-
-) : addedItems[listing._id] ? (
-  <button
-    onClick={() => onViewCart?.()}
-    className="mt-2 self-start text-blue-500 hover:text-blue-600 text-xs underline cursor-pointer"
-  >
-    View cart
-  </button>
-
-) : (
-  <button
-    onClick={() => handleAddToCart(listing)}
-    className="mt-2 self-start bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md cursor-pointer"
-  >
-    Add to cart
-  </button>
-)}</div>
-          </div>
-        </div>
-      ))}
-      
-    </div>
-    </div>
-  );
-  };
+  
   return (
-     <div className="mx-auto w-full max-w-4xl px-2 pb-4 ">
+     <div className="mx-auto w-full max-w-4xl px-2 rounded-xl border p-3 pb-4 ">
     <div className="relative flex w-full flex-col gap-4">
     
-      <div className="w-full overflow-hidden shadow-xs rounded-xl border p-3">
+      <div className="w-full overflow-hidden shadow-xs ">
       <h3 className="mb-3 text-sm font-semibold  text-gray-900 dark:text-gray-100">
         Featured Listings
       </h3>
- {loading
-  ? renderSkeleton()
-  : style === "type1"
-  ? renderType1()
-  : renderType2()}
+{loading ? renderSkeleton() : renderType()}
 </div>
 </div>
 </div>

@@ -356,30 +356,20 @@ const [listingView, setListingView] = useState<"products" | "cart" | "checkout">
                 </Tool>
               );
             }
-     if (type === "data-listing") {
-  const listing = part as {
-    type: "data-listing";
-    data: {
-      style: "type1" | "type2";
-    };
-  };
-
+       if (type === "data-listing") {
   return (
     <div className="w-full" key={key}>
       {listingView === "products" && (
         <ListingsCarousel
-          style={listing.data.style}
           isExpanded={isExpanded}
           parentWidth={
             typeof window !== "undefined" ? window.innerWidth : 1024
           }
-          onViewCart={() => {
-            setListingView("cart");
-          }}
+          onViewCart={() => setListingView("cart")}
         />
       )}
 
-        {listingView === "cart" && (
+      {listingView === "cart" && (
         <CartComponent
           goBack={() => setListingView("products")}
           goCheckout={() => setListingView("checkout")}
@@ -389,7 +379,7 @@ const [listingView, setListingView] = useState<"products" | "cart" | "checkout">
       {listingView === "checkout" && (
         <CheckoutComponent
           goBack={() => setListingView("cart")}
-           goHome={() => setListingView("products")} 
+          goHome={() => setListingView("products")}
         />
       )}
     </div>

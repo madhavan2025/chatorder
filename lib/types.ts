@@ -46,7 +46,7 @@ export type ChatTools = {
 
 export type CustomUIDataTypes = {
   text: string; // normal assistant/user text
-  listing: { style: "type1" | "type2"; items?: CarouselItem[] }; // our listing carousel
+ listing: { items?: CarouselItem[] };// our listing carousel
   cart: null; // cart UI
   checkout: null; // checkout UI
   contents: {

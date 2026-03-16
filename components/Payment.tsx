@@ -211,7 +211,7 @@ export default function PaymentForm({ goBack, goHome ,orderId}: any) {
      <button
   type="submit"
   disabled={paymentLoading}
-  className={`px-6 py-2 rounded transition 
+  className={`px-6 py-2 w-32 rounded transition 
   ${paymentLoading 
     ? "bg-gray-400 text-white cursor-not-allowed" 
     : "bg-blue-700 text-white hover:bg-blue-900"
