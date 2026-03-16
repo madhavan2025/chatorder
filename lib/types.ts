@@ -55,7 +55,7 @@ export type CustomUIDataTypes = {
     title: string;
     description?: string;
     image?: string;
-    url?: string;
+    link?: string;
   }[];
 };
 

@@ -4,6 +4,7 @@ type ContentItem = {
   id: string;
   title: string;
   description: string;
+  link:string
 };
 
 type ContentListingProps = {
@@ -11,6 +12,7 @@ type ContentListingProps = {
   count: number;
    loading?: boolean;
 };
+
 
 
 
@@ -33,6 +35,8 @@ export function ContentListing({
     </div>
   );
 };
+
+
   return (
     <div className="mx-auto w-full max-w-4xl px-2 pb-4">
       <div className="relative flex w-full flex-col gap-4">
@@ -58,12 +62,14 @@ export function ContentListing({
                   {item.description}
                 </p>
 
-                <button
-                  type="button"
-                  className="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400"
-                >
-                  View more →
-                </button>
+                <a
+  href={item.link || "#"}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-xs cursor-pointer font-semibold text-blue-600 hover:underline dark:text-blue-400"
+>
+  View more →
+</a>
               </div>
             ))
           )}

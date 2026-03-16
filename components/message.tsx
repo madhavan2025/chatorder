@@ -391,7 +391,8 @@ if (type === "data-contents") {
       items={(part.data?.items ?? []).map((item: any, i: number) => ({
         id: item.id ?? `content-${i}`,
         title: item.title,
-        description: item.description
+        description: item.description,
+        link:item.link
       }))}
       count={(part.data?.items ?? []).length}
     />
