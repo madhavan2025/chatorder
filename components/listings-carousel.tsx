@@ -182,14 +182,17 @@ const renderSkeleton = () => {
             {(showSingleViewArrows || showMultiLeft) && (
     <button
       onClick={prev}
-      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition"
+      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 
+opacity-0 group-hover:opacity-100 transition 
+bg-white/40  backdrop-blur-sm 
+rounded-full p-2"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-8 w-8 text-white drop-shadow-lg"
         fill="none"
         viewBox="0 0 24 24"
-        stroke="currentColor"
+        stroke="black"
         strokeWidth={3}
       >
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -201,14 +204,17 @@ const renderSkeleton = () => {
   {(showSingleViewArrows || showMultiRight) && (
     <button
       onClick={next}
-      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition"
-    >
+      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 
+opacity-0 group-hover:opacity-100 transition 
+bg-white/40  backdrop-blur-sm 
+rounded-full p-2"
+>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-8 w-8 text-white drop-shadow-lg"
         fill="none"
         viewBox="0 0 24 24"
-        stroke="currentColor"
+        stroke="black"
         strokeWidth={3}
       >
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

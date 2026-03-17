@@ -71,7 +71,7 @@ const [listingView, setListingView] = useState<"products" | "cart" | "checkout">
       data-testid={`message-${message.role}`}
     >
       <div
-        className={cn("flex w-full items-start gap-2 md:gap-3", {
+        className={cn("flex mt-4 w-full items-start gap-2 md:gap-3", {
           "justify-end": message.role === "user" && mode !== "edit",
           "justify-start": message.role === "assistant",
         })}
