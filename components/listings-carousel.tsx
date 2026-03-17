@@ -132,6 +132,7 @@ useEffect(() => {
   fetchData();
 }, []);
 
+
 const renderSkeleton = () => {
   return (
     <div
@@ -163,6 +164,13 @@ const renderSkeleton = () => {
       return (
     <div className={`grid gap-4 ${gridCols}`}>
       {visibleListings.map((listing, i) => {
+        const MAX_LENGTH = isExpanded ? 160 : 100; // 👈 key change
+
+const isLong = listing.description.length > MAX_LENGTH;
+
+const shortText = isLong
+  ? listing.description.slice(0, MAX_LENGTH)
+  : listing.description;
       const isFirst = i === 0;
         const isLast = i === visibleListings.length - 1;
         const showSingleViewArrows = visibleCount === 1;
@@ -223,19 +231,25 @@ rounded-full p-2"
   )}
          
 </div>
-          <h4 className="mt-2 font-semibold  text-gray-900 dark:text-gray-100">{listing.title}</h4>
-          <p className=" text-gray-800 dark:text-gray-100 font-bold">${listing.price}</p>
-          <p className="text-sm line-clamp-3 text-gray-600 dark:text-gray-100 ">{listing.description}</p>
-          <div className="mt-auto pt-2 flex gap-3">
-  
-  <button
+         <h4 className="mt-2 font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 min-h-[3rem]">
+  {listing.title}
+</h4>
+          <p className=" text-gray-800 dark:text-gray-100  font-bold">${listing.price}</p>
+           <p className={`text-sm text-gray-600 dark:text-gray-100 relative ${isExpanded ? "line-clamp-3" : "line-clamp-2"}`}>
+  {listing.description}
+
+  {/* fade + space for view more */}
+  <span className="inline-block w-[80px]"></span>
+
+  <span
     onClick={() => window.open(listing.link, "_blank")}
-    className="flex-1 bg-gray-200 hover:bg-gray-300 cursor-pointer 
-    dark:bg-gray-700 dark:hover:bg-gray-600 
-    text-gray-900 dark:text-white py-2 px-3 rounded-md text-sm"
+    className="absolute bottom-0 right-0 text-blue-600 dark:text-blue-400 cursor-pointer hover:underline font-medium bg-white dark:bg-gray-900 pl-1"
   >
-    View Product
-  </button>
+    ...View more
+  </span>
+</p>
+          <div className="mt-auto pt-2 ">
+  
 
   {loadingItems[listing._id] ? (
     <button

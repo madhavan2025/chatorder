@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useEffect } from "react";
+import { useState,useEffect,useRef } from "react";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { VisibilityType } from "./visibility-selector";
 import { ChatStatus } from "ai";
@@ -63,6 +63,8 @@ export function Chat({
 const stop = async () => {};
 const votes: { chatId: string; messageId: string; isUpvoted: boolean }[] = [];
 const selectedVisibilityType = initialVisibilityType; // UI stub
+const [isLoading, setIsLoading] = useState(false);
+const controllerRef = useRef<AbortController | null>(null);
 const [isExpanded, setIsExpanded] = useState(initialExpanded);
 useEffect(() => {
   setIsExpanded(initialExpanded);
@@ -103,17 +105,36 @@ useEffect(() => {
     fetchData();
   }, []);
 
-     const addAssistantMessage = (text: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        parts: [{ type: "text", text }],
-      },
-    ]);
-  };
+     
 
+  async function fetchAnswerFromAPI(question: string): Promise<string> {
+  try {
+    controllerRef.current = new AbortController();
+    const res = await fetch("/api/proxy-ask", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    clientId: "client-c",
+    question,
+    topK: 1,
+  }),
+});
+
+    if (!res.ok) throw new Error("API error");
+
+    const data = await res.json();
+
+    return data?.answer ?? "Sorry, I couldn’t find an answer.";
+  } catch (error:any) {
+    if (error.name === "AbortError") {
+      return "⏸️ Response stopped by user.";
+    }
+    console.error("API fetch error:", error);
+    return "⚠️ Failed to fetch response from server.";
+  }
+}
   
  const sendMessage = async (
   message?: {
@@ -131,22 +152,21 @@ useEffect(() => {
       .map((p) => p.text)
       .join(" ") ??
     "";
-
+    
   const lower = text.toLowerCase();
 
-  setMessages((prev) => [
+   setMessages((prev) => [
     ...prev,
     {
       id: crypto.randomUUID(),
       role: message.role ?? "user",
       parts:
         message.parts ??
-        (message.text
-          ? [{ type: "text", text: message.text }]
-          : []),
+        (message.text ? [{ type: "text", text: message.text }] : []),
     },
   ]);
-   
+    setIsLoading(true);
+      try {
 
  if (lower.includes("show products")) {
   setMessages((prev) => [
@@ -165,8 +185,6 @@ useEffect(() => {
   ]);
   return;
 }
-
-
 
 
 if (lower.includes("show contents")) {
@@ -214,10 +232,33 @@ if (lower.includes("show contents")) {
   ]);
   return;
 }
+ const answer = await fetchAnswerFromAPI(text);
 
-  
-  
-  addAssistantMessage("Hi 😊 What can I help you with today?");
+ setMessages((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        parts: [{ type: "text", text: answer }],
+      },
+    ]);
+  } catch (error) {
+    console.error("Send message error:", error);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        parts: [
+          { type: "text", text: "⚠️ Something went wrong. Try again." },
+        ],
+      },
+    ]);
+  } finally {
+    // ✅ ALWAYS stop loading
+    setIsLoading(false);
+  }
 };
   return (
     <>
