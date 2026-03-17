@@ -57,10 +57,13 @@ export function Chat({
   const [contents, setContents] = useState<any[]>([]);
    const [parentWidth, setParentWidth] = useState<number | null>(null);
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
-   const status: ChatStatus = "ready"; 
+   const [status, setStatus] = useState<ChatStatus>("ready");
    const addToolApprovalResponse = async () => {};
   const regenerate = async () => {};
-const stop = async () => {};
+const stop = async () => {
+  controllerRef.current?.abort(); // ✅ cancel request
+  setStatus("ready"); // ✅ reset UI
+};
 const votes: { chatId: string; messageId: string; isUpvoted: boolean }[] = [];
 const selectedVisibilityType = initialVisibilityType; // UI stub
 const [isLoading, setIsLoading] = useState(false);
@@ -120,6 +123,7 @@ useEffect(() => {
     question,
     topK: 1,
   }),
+  signal: controllerRef.current.signal, 
 });
 
     if (!res.ok) throw new Error("API error");
@@ -165,6 +169,7 @@ useEffect(() => {
         (message.text ? [{ type: "text", text: message.text }] : []),
     },
   ]);
+       setStatus("submitted"); 
     setIsLoading(true);
       try {
 
@@ -258,6 +263,7 @@ if (lower.includes("show contents")) {
   } finally {
     // ✅ ALWAYS stop loading
     setIsLoading(false);
+     setStatus("ready");
   }
 };
   return (
