@@ -80,7 +80,6 @@ if (isEmbed) return null;
     height={56}
     unoptimized
     style={{
-      backgroundColor: "#fff",
       borderRadius: chatTheme.borderRadius,
       objectFit: "contain",
       
@@ -114,7 +113,7 @@ if (isEmbed) return null;
   `}
   style={{
     backgroundColor: chatTheme.windowBg,
-    border: `1px solid ${chatTheme.borderColor}`,
+    border: `${chatTheme.borderColor}`,
     boxShadow: chatTheme.shadow,
   }}
 >
