@@ -41,9 +41,10 @@ useEffect(() => {
   if (!resolvedTheme) return;
 
   const loadTheme = async () => {
+    const userId = "150001";
     try {
       const themeName = resolvedTheme === "dark" ? "darkTheme" : "default";
-      const res = await fetch(`/api/chat-theme?theme=${themeName}`);
+      const res = await fetch(`/api/chat-theme?theme=${themeName}&userId=${userId}`);
       const data = await res.json();
       setChatTheme(data);
     } catch (err) {
@@ -71,15 +72,15 @@ if (isEmbed) return null;
           onClick={() => setIsOpen(true)}
           className="flex items-center justify-center cursor-pointer"
         >
-  {chatTheme?.chatIcon && (
+  {chatTheme?.agentIcon && (
   <Image
-    src={chatTheme.chatIcon}
-    alt="Chat"
-    width={chatTheme.chatIconSize}
-    height={chatTheme.chatIconSize}
+      src={chatTheme.agentIcon}
+    alt="sykalabagentbot"
+    width={56}
+    height={56}
     unoptimized
     style={{
-      backgroundColor: chatTheme.chatIconBg,
+      backgroundColor: "#fff",
       borderRadius: chatTheme.borderRadius,
       objectFit: "contain",
       
@@ -113,7 +114,7 @@ if (isEmbed) return null;
   `}
   style={{
     backgroundColor: chatTheme.windowBg,
-    border: chatTheme.borderColor,
+    border: `1px solid ${chatTheme.borderColor}`,
     boxShadow: chatTheme.shadow,
   }}
 >
@@ -124,7 +125,9 @@ if (isEmbed) return null;
           backgroundColor: chatTheme?.headerBg,
         }}
       >
-        <span className="font-semibold text-white">Sykalab-AI-ShopAgent</span>
+        <span className="font-semibold text-white">
+  {chatTheme?.agentName}
+</span>
 
         <div className="flex items-center gap-3">
           {/* Dark Mode Toggle */}
