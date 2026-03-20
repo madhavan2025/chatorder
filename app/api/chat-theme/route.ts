@@ -12,8 +12,8 @@ export async function GET(req: Request) {
 
     // 🎯 Fetch all required data
     const [defaultTheme, darkTheme, userAgent] = await Promise.all([
-      db.collection("ChatThemes").findOne({ name: "default" }),
-      db.collection("ChatThemes").findOne({ name: "darkTheme" }),
+      db.collection("agents").findOne({ name: "default" }),
+      db.collection("agents").findOne({ name: "darkTheme" }),
       userId
         ? db.collection("agents").findOne({ userId })
         : null,
