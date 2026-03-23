@@ -149,26 +149,43 @@ useEffect(() => {
 ) => {
   if (!message) return;
 
-  const text =
-    message.text ??
-    message.parts
-      ?.filter((p) => p.type === "text")
-      .map((p) => p.text)
-      .join(" ") ??
-    "";
+const textParts =
+  message.parts?.filter((p) => p.type === "text") || [];
+
+
+const text = textParts.map((p: any) => p.text).join(" ");
+const fileParts =
+  message.parts?.filter((p) => p.type === "file") || [];
+
+ let finalText = text;
+
+
     
-  const lower = text.toLowerCase();
+const lower = finalText.toLowerCase();
 
    setMessages((prev) => [
-    ...prev,
-    {
-      id: crypto.randomUUID(),
-      role: message.role ?? "user",
-      parts:
-        message.parts ??
-        (message.text ? [{ type: "text", text: message.text }] : []),
-    },
-  ]);
+  ...prev,
+  {
+    id: crypto.randomUUID(),
+    role: "user",
+    parts: [
+      // keep file/audio parts FIRST
+      ...(fileParts.length > 0
+        ? fileParts.map((file) => ({
+            type: "file" as const,
+            url: file.url,
+           name: (file as any).name,
+            mediaType: file.mediaType,
+          }))
+        : []),
+
+      // then text (ONLY if exists)
+      ...(finalText
+        ? [{ type: "text" as const, text: finalText }]
+        : []),
+    ],
+  },
+]);
        setStatus("submitted"); 
     setIsLoading(true);
       try {
@@ -237,7 +254,7 @@ if (lower.includes("show contents")) {
   ]);
   return;
 }
- const answer = await fetchAnswerFromAPI(text);
+const answer = await fetchAnswerFromAPI(finalText);
 
  setMessages((prev) => [
       ...prev,

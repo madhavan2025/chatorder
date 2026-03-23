@@ -458,6 +458,25 @@ export const UncheckedSquare = ({ size = 16 }: { size?: number }) => {
   );
 };
 
+export const MicIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      style={{ color: "currentcolor" }}
+      viewBox="0 0 16 16"
+      width={size}
+    >
+      <path
+        clipRule="evenodd"
+        d="M5.5 3.5C5.5 2.11929 6.61929 1 8 1C9.38071 1 10.5 2.11929 10.5 3.5V8.5C10.5 9.88071 9.38071 11 8 11C6.61929 11 5.5 9.88071 5.5 8.5V3.5ZM4 3.5C4 1.29086 5.79086 -0.5 8 -0.5C10.2091 -0.5 12 1.29086 12 3.5V8.5C12 10.7091 10.2091 12.5 8 12.5C5.79086 12.5 4 10.7091 4 8.5V3.5ZM3 8V8.5C3 11.0118 4.84157 13.094 7.25 13.4548V15H6.25H5.5V16.5H6.25H9.75H10.5V15H9.75H8.75V13.4548C11.1584 13.094 13 11.0118 13 8.5V8H11.5V8.5C11.5 10.433 9.93299 12 8 12C6.067 12 4.5 10.433 4.5 8.5V8H3Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+};
+
 export const MoreIcon = ({ size = 16 }: { size?: number }) => {
   return (
     <svg

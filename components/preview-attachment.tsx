@@ -3,36 +3,83 @@ import type { Attachment } from "@/lib/types";
 import { Loader } from "./elements/loader";
 import { CrossSmallIcon } from "./icons";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export const PreviewAttachment = ({
   attachment,
   isUploading = false,
   onRemove,
+  variant
 }: {
   attachment: Attachment;
   isUploading?: boolean;
   onRemove?: () => void;
+  variant?: "compact" | "chat";
 }) => {
   const { name, url, contentType } = attachment;
 
   return (
     <div
-      className="group relative size-16 overflow-hidden rounded-lg border bg-muted"
+     className={cn(
+  "group relative overflow-hidden border bg-muted",
+  variant === "compact"
+    ? "w-12 h-12 rounded-md bg-muted"
+    : "w-fit max-w-xs rounded-2xl px-3 py-2 bg-gray-100 dark:bg-gray-800"
+)}
       data-testid="input-attachment-preview"
     >
       {contentType?.startsWith("image") ? (
-        <Image
-          alt={name ?? "An image attachment"}
-          className="size-full object-cover"
-          height={64}
-          src={url}
-          width={64}
-        />
-      ) : (
-        <div className="flex size-full items-center justify-center text-muted-foreground text-xs">
-          File
+  variant === "compact" ? (
+    <Image
+      alt={name ?? "image"}
+      className="size-full object-cover"
+      height={64}
+      src={url}
+      width={64}
+    />
+  ) : (
+    <img
+      src={url}
+      alt={name}
+      className="max-w-xs rounded-lg"
+    />
+  )
+) : contentType?.startsWith("audio") ? (
+  <audio
+    controls
+    className={cn(
+      "outline-none",
+      variant === "compact" ? "w-full h-6" : "w-[240px] h-10"
+    )}
+  >
+    <source src={url} type={contentType} />
+  </audio>
+) : contentType?.startsWith("video") ? (
+  <video
+    controls
+    className={cn(
+      "rounded",
+      variant === "compact" ? "size-full" : "max-w-xs"
+    )}
+  >
+    <source src={url} type={contentType} />
+  </video>
+) : (
+   <div className="flex items-center justify-center h-full w-full">
+          <a
+            href={url}
+            target="_blank"
+            className={cn(
+              "underline break-all",
+              variant === "compact"
+                ? "text-[10px] text-white"
+                : "text-sm text-blue-500"
+            )}
+          >
+            📄 {name || "Open file"}
+          </a>
         </div>
-      )}
+)}
 
       {isUploading && (
         <div
@@ -43,20 +90,27 @@ export const PreviewAttachment = ({
         </div>
       )}
 
-      {onRemove && !isUploading && (
-        <Button
-          className="absolute top-0.5 right-0.5 size-4 rounded-full p-0 opacity-0 transition-opacity group-hover:opacity-100"
-          onClick={onRemove}
-          size="sm"
-          variant="destructive"
-        >
-          <CrossSmallIcon size={8} />
-        </Button>
-      )}
+   {onRemove && !isUploading && (
+  <Button
+    className={cn(
+      "absolute z-10 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center",
+      variant === "compact"
+        ? "top-1 right-1 h-5 w-5"
+        : "top-2 right-2 h-6 w-6 bg-black/60 hover:bg-black text-white"
+    )}
+    onClick={onRemove}
+    size="icon"
+    variant="destructive"
+  >
+    <CrossSmallIcon size={12} />
+  </Button>
+)}
 
-      <div className="absolute inset-x-0 bottom-0 truncate bg-linear-to-t from-black/80 to-transparent px-1 py-0.5 text-[10px] text-white">
-        {name}
-      </div>
+      {variant === "compact" && (
+        <div className="absolute inset-x-0 bottom-0 truncate bg-black/80 px-1 py-0.5 text-[10px] text-white">
+          {name}
+        </div>
+      )}
     </div>
   );
 };

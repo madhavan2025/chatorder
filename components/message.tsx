@@ -104,14 +104,19 @@ const [listingView, setListingView] = useState<"products" | "cart" | "checkout">
               data-testid={"message-attachments"}
             >
               {attachmentsFromMessage.map((attachment) => (
-                <PreviewAttachment
-                  attachment={{
-                    name: attachment.filename ?? "file",
-                    contentType: attachment.mediaType,
-                    url: attachment.url,
-                  }}
-                  key={attachment.url}
-                />
+               <PreviewAttachment
+  attachment={{
+    url: attachment.url,
+    name: attachment.filename ?? "file",
+    contentType: attachment.mediaType,
+  }}
+  variant="chat"   // ✅ THIS IS THE KEY FIX
+  key={attachment.url}
+    onRemove={() => {
+    // remove logic here
+    console.log("remove", attachment.url);
+  }}
+/>
               ))}
             </div>
           )}

@@ -26,7 +26,7 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from "./elements/prompt-input";
-import { ArrowUpIcon, PaperclipIcon, StopIcon } from "./icons";
+import { ArrowUpIcon, PaperclipIcon, StopIcon ,MicIcon} from "./icons";
 import { PreviewAttachment } from "./preview-attachment";
 import { Button } from "./ui/button";
 import type { VisibilityType } from "./visibility-selector";
@@ -59,10 +59,59 @@ function PureMultimodalInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
   const hasAutoFocused = useRef(false);
-
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   const [localStorageInput, setLocalStorageInput] = useLocalStorage("input", "");
   const [uploadQueue, setUploadQueue] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleStartRecording = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    const mediaRecorder = new MediaRecorder(stream);
+    mediaRecorderRef.current = mediaRecorder;
+    audioChunksRef.current = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        audioChunksRef.current.push(event.data);
+      }
+    };
+
+    mediaRecorder.onstop = handleStopRecording;
+
+    mediaRecorder.start();
+    setIsRecording(true);
+  } catch (err) {
+    toast.error("Microphone access denied");
+  }
+};
+
+const handleStopRecording = async () => {
+  setIsRecording(false);
+
+  const blob = new Blob(audioChunksRef.current, {
+    type: "audio/webm",
+  });
+
+  const file = new File([blob], `recording-${Date.now()}.webm`, {
+    type: "audio/webm",
+  });
+
+  const uploaded = await uploadFile(file);
+
+  if (uploaded) {
+    const newAttachment: Attachment = {
+  url: uploaded.url,
+  name: uploaded.name,
+  contentType: uploaded.contentType,
+};
+
+    setAttachments((prev) => [...prev, newAttachment]);
+  }
+};
 
   useEffect(() => {
     if (!hasAutoFocused.current && width) {
@@ -243,18 +292,35 @@ useEffect(() => {
     e.preventDefault();
     fileInputRef.current?.click();
   }}
-  disabled={status !== "ready"}
-  
+  disabled={status !== "ready"} 
 >
   <PaperclipIcon size={14} />
 </Button>
+ <Button
+    variant="ghost"
+    size="icon-sm"
+    onClick={(e) => {
+      e.preventDefault();
+      if (isRecording) {
+        mediaRecorderRef.current?.stop();
+      } else {
+        handleStartRecording();
+      }
+    }}
+    disabled={status !== "ready"}
+  >
+    {isRecording ? <StopIcon size={14} /> : <MicIcon size={14} />}
+  </Button>
           </PromptInputTools>
 
           {status === "submitted" ? (
             <StopButton stop={stop} setMessages={setMessages} />
           ) : (
             <PromptInputSubmit
-  disabled={!input.trim() || uploadQueue.length > 0}
+  disabled={
+  (!input.trim() && attachments.length === 0) ||
+  uploadQueue.length > 0
+}
   status={status}
 className="
  bg-blue-500 
