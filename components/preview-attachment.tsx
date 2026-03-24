@@ -18,7 +18,7 @@ export const PreviewAttachment = ({
   variant?: "compact" | "chat";
   
 }) => {
-  const { name, url, contentType,pathname } = attachment;
+  const { name, url, contentType} = attachment;
 
   return (
     <div

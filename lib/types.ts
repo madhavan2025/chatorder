@@ -101,5 +101,6 @@ export type Attachment = {
   contentType?: string;
   publicId?: string; 
   resourceType?: string;
+  pathname?: string;
 };
 
