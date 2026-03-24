@@ -67,6 +67,13 @@ const attachmentsFromMessage = message.parts.filter(
 
   useDataStream();
 
+  const hasText = message.parts?.some(
+  (p) => p.type === "text" && p.text?.trim()
+);
+
+const hasFiles = message.parts?.some(
+  (p) => p.type === "file"
+);
   return (
     <div
       className="group/message fade-in w-full animate-in duration-200"
@@ -87,16 +94,13 @@ const attachmentsFromMessage = message.parts.filter(
 
         <div
           className={cn("flex flex-col", {
-            "gap-2 md:gap-4": message.parts?.some(
-              (p) => p.type === "text" && p.text?.trim()
-            ),
+            "gap-2 md:gap-4": hasText || hasFiles, 
             "w-full":
-              (message.role === "assistant" &&
-                (message.parts?.some(
-                  (p) => p.type === "text" && p.text?.trim()
-                ) ||
-                  message.parts?.some((p) => p.type.startsWith("tool-")))) ||
-              mode === "edit",
+  (message.role === "assistant" &&
+    (hasText ||
+      hasFiles || 
+      message.parts?.some((p) => p.type.startsWith("tool-")))) ||
+  mode === "edit",
             "max-w-[calc(100%-2.5rem)] sm:max-w-[min(fit-content,80%)]":
               message.role === "user" && mode !== "edit",
           })}
@@ -115,6 +119,7 @@ const attachmentsFromMessage = message.parts.filter(
     publicId: attachment.publicId,
   }}
   variant="chat"   // ✅ THIS IS THE KEY FIX
+  hasText={hasText}
   key={attachment.url}
    
 />

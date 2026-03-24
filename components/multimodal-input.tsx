@@ -65,7 +65,7 @@ function PureMultimodalInput({
   const [localStorageInput, setLocalStorageInput] = useLocalStorage("input", "");
   const [uploadQueue, setUploadQueue] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleStartRecording = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -145,27 +145,27 @@ useEffect(() => {
     }
   };
 
-  const submitForm = useCallback(() => {
+ const submitForm = useCallback(() => {
   window.history.pushState({}, "", `/chat/${chatId}`);
 
-  setAttachments((currentAttachments) => {
-    sendMessage({
-      role: "user",
-      parts: [
-        ...currentAttachments.map((attachment) => ({
-          type: "file" as const,
-          url: attachment.url,
-          name: attachment.name ?? "file",
-          mediaType:
-            attachment.contentType ?? "application/octet-stream",
-        })),
-        ...(input.trim()
-          ? [{ type: "text" as const, text: input }]
-          : []),
-      ],
-    });
+  const currentAttachments = [...attachments]; // ✅ snapshot latest state
 
-    return []; // ✅ clear attachments AFTER sending
+  setAttachments([]); // clear immediately
+
+  sendMessage({
+    role: "user",
+    parts: [
+      ...currentAttachments.map((attachment) => ({
+        type: "file" as const,
+        url: attachment.url,
+        name: attachment.name ?? "file",
+        mediaType:
+          attachment.contentType ?? "application/octet-stream",
+      })),
+      ...(input.trim()
+        ? [{ type: "text" as const, text: input }]
+        : []),
+    ],
   });
 
   setLocalStorageInput("");
@@ -175,15 +175,7 @@ useEffect(() => {
   if (width && width > 768) {
     textareaRef.current?.focus();
   }
-}, [
-  input,
-  sendMessage,
-  setAttachments,
-  setLocalStorageInput,
-  setInput,
-  width,
-  chatId,
-]);
+}, [attachments, input, sendMessage, setAttachments, setLocalStorageInput, setInput, width, chatId]);
 
   const uploadFile = async (
   file: File
@@ -242,7 +234,7 @@ useEffect(() => {
         onSubmit={(event) => {
           event.preventDefault();
 
-          if (!input.trim() && attachments.length === 0) return;
+          if (!input.trim() && attachments.length === 0||uploadQueue.length>0||isDeleting) return;
 
           if (status !== "ready") {
             toast.error("Wait for response to finish");
@@ -260,6 +252,7 @@ useEffect(() => {
                 attachment={attachment}
                  onRemove={async () => {
   try {
+    setIsDeleting(true);
     await fetch("/api/files/delete", {
       method: "POST",
       headers: {
@@ -276,6 +269,8 @@ useEffect(() => {
     );
   } catch {
     toast.error("Failed to delete file");
+  }finally{
+    setIsDeleting(false);
   }
 }}
               />
