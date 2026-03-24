@@ -86,7 +86,7 @@ export const PreviewAttachment = ({
           ) : (
             <div className="w-[240px] h-10 bg-gray-200 rounded flex items-center px-2">
               <div className="relative w-full h-2 bg-gray-300 rounded">
-                <div className="absolute top-0 left-0 h-2 bg-blue-500 rounded w-full" />
+                <div className="absolute top-0 left-0 h-2 bg-black rounded w-full" />
               </div>
               <span className="ml-2 text-xs text-gray-600">
                 {duration ? formatDuration(duration) : "0:00"}
