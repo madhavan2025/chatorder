@@ -22,44 +22,33 @@ export const PreviewAttachment = ({
   const { name, url, contentType } = attachment;
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [progress, setProgress] = useState(0);
+  
   const [duration, setDuration] = useState(0);
 
-  useEffect(() => {
+   useEffect(() => {
     if (!hasText && contentType?.startsWith("audio") && audioRef.current) {
       const audio = audioRef.current;
-      const updateProgress = () => setProgress(audio.currentTime);
-      const setAudioDuration = () => setDuration(audio.duration);
-
-      audio.addEventListener("timeupdate", updateProgress);
-      audio.addEventListener("loadedmetadata", setAudioDuration);
-      audio.play().catch(() => {}); // autoplay if allowed
-
-      return () => {
-        audio.removeEventListener("timeupdate", updateProgress);
-        audio.removeEventListener("loadedmetadata", setAudioDuration);
-      };
+      const onLoaded = () => setDuration(audio.duration);
+      audio.addEventListener("loadedmetadata", onLoaded);
+      return () => audio.removeEventListener("loadedmetadata", onLoaded);
     }
 
     if (!hasText && contentType?.startsWith("video") && videoRef.current) {
       const video = videoRef.current;
-      const updateProgress = () => setProgress(video.currentTime);
-      const setVideoDuration = () => setDuration(video.duration);
-
-      video.addEventListener("timeupdate", updateProgress);
-      video.addEventListener("loadedmetadata", setVideoDuration);
-      video.play().catch(() => {});
-
-      return () => {
-        video.removeEventListener("timeupdate", updateProgress);
-        video.removeEventListener("loadedmetadata", setVideoDuration);
-      };
+      const onLoaded = () => setDuration(video.duration);
+      video.addEventListener("loadedmetadata", onLoaded);
+      return () => video.removeEventListener("loadedmetadata", onLoaded);
     }
   }, [hasText, contentType]);
 
-  const progressPercent = duration ? (progress / duration) * 100 : 0;
-
-  return (
+  const formatDuration = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${s}`;
+  };
+   return (
     <div
       className={cn(
         "group relative overflow-hidden border bg-muted",
@@ -83,45 +72,42 @@ export const PreviewAttachment = ({
         )
       ) : contentType?.startsWith("audio") ? (
         <div className="relative">
-          <audio
-            ref={audioRef}
-            controls={hasText}
-            className={cn(
-              "outline-none",
-              variant === "compact" ? "w-full h-6" : "w-[240px] h-10"
-            )}
-          >
-            <source src={url} type={contentType} />
-          </audio>
-
-          {!hasText && (
+          {hasText ? (
+            <audio
+              ref={audioRef}
+              controls
+              className={cn(
+                "outline-none",
+                variant === "compact" ? "w-full h-6" : "w-[240px] h-10"
+              )}
+            >
+              <source src={url} type={contentType} />
+            </audio>
+          ) : (
             <div className="w-[240px] h-10 bg-gray-200 rounded flex items-center px-2">
               <div className="relative w-full h-2 bg-gray-300 rounded">
-                <div
-                  className="absolute top-0 left-0 h-2 bg-blue-500 rounded"
-                  style={{ width: `${progressPercent}%` }}
-                />
+                <div className="absolute top-0 left-0 h-2 bg-blue-500 rounded w-full" />
               </div>
               <span className="ml-2 text-xs text-gray-600">
-                {Math.floor(progress / 60)}:{String(Math.floor(progress % 60)).padStart(2, "0")}
+                {duration ? formatDuration(duration) : "0:00"}
               </span>
             </div>
           )}
         </div>
       ) : contentType?.startsWith("video") ? (
         <div className="relative">
-          <video
-            ref={videoRef}
-            controls={hasText}
-            className={cn(
-              "rounded",
-              variant === "compact" ? "size-full" : "max-w-xs"
-            )}
-          >
-            <source src={url} type={contentType} />
-          </video>
-
-          {!hasText && (
+          {hasText ? (
+            <video
+              ref={videoRef}
+              controls
+              className={cn(
+                "rounded",
+                variant === "compact" ? "size-full" : "max-w-xs"
+              )}
+            >
+              <source src={url} type={contentType} />
+            </video>
+          ) : (
             <div className="w-[240px] h-10 bg-gray-200 rounded flex items-center px-2 text-xs text-gray-500">
               Video message
             </div>
