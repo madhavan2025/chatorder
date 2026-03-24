@@ -176,6 +176,7 @@ const lower = finalText.toLowerCase();
             url: file.url,
            name: (file as any).name,
             mediaType: file.mediaType,
+            publicId: (file as any).publicId 
           }))
         : []),
 

@@ -96,7 +96,10 @@ export type ChatMessage = UIMessage<
 >;
 
 export type Attachment = {
-  name: string;
   url: string;
-  contentType: string;
+  name?: string;
+  contentType?: string;
+  publicId?: string; 
+  resourceType?: string;
 };
+

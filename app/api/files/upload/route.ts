@@ -1,4 +1,13 @@
 import { NextResponse } from "next/server";
+import { v2 as cloudinary } from "cloudinary";
+
+export const runtime = "nodejs";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
 
 export async function POST(req: Request) {
   try {
@@ -9,27 +18,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 👉 TEMP: store in /public/uploads (for testing)
-    const fileName = `${Date.now()}-${file.name}`;
-    const path = `./public/uploads/${fileName}`;
-
-    const fs = await import("fs/promises");
-    await fs.writeFile(path, buffer);
-
-    return NextResponse.json({
-      url: `/uploads/${fileName}`,
-      pathname: fileName,
-      contentType: file.type,
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { resource_type: "auto" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
     });
+
+  return NextResponse.json({
+  url: (uploadResult as any).secure_url,
+  pathname: (uploadResult as any).public_id,
+  contentType: file.type,
+  resourceType: (uploadResult as any).resource_type, // ✅ ADD
+});
+
   } catch (err) {
     console.error("UPLOAD ERROR:", err);
-    return NextResponse.json(
-      { error: "Upload failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

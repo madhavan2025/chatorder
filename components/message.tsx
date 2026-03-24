@@ -28,6 +28,9 @@ import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
 
+type FilePart = Extract<ChatMessage["parts"][number], { type: "file" }> & {
+  publicId?: string;
+};
 
 const PurePreviewMessage = ({
   addToolApprovalResponse,
@@ -58,9 +61,9 @@ contents?: any[];
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
 const [listingView, setListingView] = useState<"products" | "cart" | "checkout">("products");
-  const attachmentsFromMessage = message.parts.filter(
-    (part) => part.type === "file"
-  );
+const attachmentsFromMessage = message.parts.filter(
+  (part) => part.type === "file"
+) as FilePart[];
 
   useDataStream();
 
@@ -109,13 +112,11 @@ const [listingView, setListingView] = useState<"products" | "cart" | "checkout">
     url: attachment.url,
     name: attachment.filename ?? "file",
     contentType: attachment.mediaType,
+    publicId: attachment.publicId,
   }}
   variant="chat"   // ✅ THIS IS THE KEY FIX
   key={attachment.url}
-    onRemove={() => {
-    // remove logic here
-    console.log("remove", attachment.url);
-  }}
+   
 />
               ))}
             </div>

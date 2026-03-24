@@ -9,14 +9,16 @@ export const PreviewAttachment = ({
   attachment,
   isUploading = false,
   onRemove,
-  variant
+  variant,
+  
 }: {
   attachment: Attachment;
   isUploading?: boolean;
   onRemove?: () => void;
   variant?: "compact" | "chat";
+  
 }) => {
-  const { name, url, contentType } = attachment;
+  const { name, url, contentType,pathname } = attachment;
 
   return (
     <div

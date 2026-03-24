@@ -103,10 +103,11 @@ const handleStopRecording = async () => {
   const uploaded = await uploadFile(file);
 
   if (uploaded) {
-    const newAttachment: Attachment = {
+   const newAttachment: Attachment = {
   url: uploaded.url,
   name: uploaded.name,
   contentType: uploaded.contentType,
+  resourceType: uploaded.resourceType,
 };
 
     setAttachments((prev) => [...prev, newAttachment]);
@@ -145,41 +146,48 @@ useEffect(() => {
   };
 
   const submitForm = useCallback(() => {
-    window.history.pushState({}, "", `/chat/${chatId}`);
+  window.history.pushState({}, "", `/chat/${chatId}`);
 
+  setAttachments((currentAttachments) => {
     sendMessage({
       role: "user",
       parts: [
-        ...attachments.map((attachment) => ({
+        ...currentAttachments.map((attachment) => ({
           type: "file" as const,
           url: attachment.url,
-          name: attachment.name,
-          mediaType: attachment.contentType,
+          name: attachment.name ?? "file",
+          mediaType:
+            attachment.contentType ?? "application/octet-stream",
         })),
-        { type: "text", text: input },
+        ...(input.trim()
+          ? [{ type: "text" as const, text: input }]
+          : []),
       ],
     });
 
-    setAttachments([]);
-    setLocalStorageInput("");
-    setInput("");
-    resetHeight();
+    return []; // ✅ clear attachments AFTER sending
+  });
 
-    if (width && width > 768) {
-      textareaRef.current?.focus();
-    }
-  }, [
-    input,
-    attachments,
-    sendMessage,
-    setAttachments,
-    setLocalStorageInput,
-    setInput,
-    width,
-    chatId,
-  ]);
+  setLocalStorageInput("");
+  setInput("");
+  resetHeight();
 
-  const uploadFile = async (file: File) => {
+  if (width && width > 768) {
+    textareaRef.current?.focus();
+  }
+}, [
+  input,
+  sendMessage,
+  setAttachments,
+  setLocalStorageInput,
+  setInput,
+  width,
+  chatId,
+]);
+
+  const uploadFile = async (
+  file: File
+): Promise<Attachment | undefined> => {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -195,6 +203,7 @@ useEffect(() => {
           url: data.url,
           name: data.pathname,
           contentType: data.contentType,
+          resourceType: data.resourceType,
         };
       }
 
@@ -249,11 +258,26 @@ useEffect(() => {
               <PreviewAttachment
                 key={attachment.url}
                 attachment={attachment}
-                onRemove={() =>
-                  setAttachments((prev) =>
-                    prev.filter((a) => a.url !== attachment.url)
-                  )
-                }
+                 onRemove={async () => {
+  try {
+    await fetch("/api/files/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        publicId: attachment.name,
+        resourceType: attachment.resourceType || "video", // this is your public_id
+      }),
+    });
+
+    setAttachments((prev) =>
+      prev.filter((a) => a.url !== attachment.url)
+    );
+  } catch {
+    toast.error("Failed to delete file");
+  }
+}}
               />
             ))}
 
