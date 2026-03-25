@@ -7,7 +7,7 @@ import type { ChatMessage } from "@/lib/types";
 import { Action, Actions } from "./elements/actions";
 import { CopyIcon, PencilEditIcon, ThumbDownIcon, ThumbUpIcon} from "./icons";
 import { CheckIcon } from "lucide-react";
-
+import { PlayIcon, StopCircleIcon } from "lucide-react";
 export function PureMessageActions({
   chatId,
   message,
@@ -27,8 +27,10 @@ export function PureMessageActions({
   const [copied, setCopied] = useState(false);
   const [localVote, setLocalVote] = useState<"up" | "down" | null>(null);
    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  // ✅ Keep localVote synced with server vote
-  useEffect(() => {
+  const [isPlaying, setIsPlaying] = useState(false);
+const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  
+useEffect(() => {
     if (!vote) {
       setLocalVote(null);
     } else {
@@ -60,6 +62,26 @@ export function PureMessageActions({
   }, 3000);
 };
 
+const handlePlay = () => {
+  if (!textFromParts) return;
+
+  // Stop if already playing
+  if (isPlaying) {
+    window.speechSynthesis.cancel();
+    setIsPlaying(false);
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(textFromParts);
+  utteranceRef.current = utterance;
+
+  utterance.onend = () => {
+    setIsPlaying(false);
+  };
+
+  window.speechSynthesis.speak(utterance);
+  setIsPlaying(true);
+};
   const handleVote = async (type: "up" | "down") => {
     const newVote = localVote === type ? null : type; // toggle behavior
     setLocalVote(newVote);
@@ -104,6 +126,15 @@ if (message.role === "user") {
 
   return (
     <Actions className="-ml-0.5">
+      <Action onClick={handlePlay} tooltip={isPlaying ? "Stop" : "Play"}>
+  <span
+    className={`transition-colors ${
+      isPlaying ? "text-blue-500" : "text-muted-foreground"
+    }`}
+  >
+    {isPlaying ? <StopCircleIcon size={18} /> : <PlayIcon size={18} />}
+  </span>
+</Action>
         <Action
         onClick={handleCopy}
         tooltip={copied ? "Copied!" : "Copy"}

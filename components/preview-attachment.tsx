@@ -10,14 +10,13 @@ export const PreviewAttachment = ({
   attachment,
   isUploading = false,
   onRemove,
-  variant,
-  hasText = true,
+  variant
 }: {
   attachment: Attachment;
   isUploading?: boolean;
   onRemove?: () => void;
   variant?: "compact" | "chat";
-  hasText?: boolean;
+
 }) => {
   const { name, url, contentType } = attachment;
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -25,21 +24,21 @@ export const PreviewAttachment = ({
   
   const [duration, setDuration] = useState(0);
 
-   useEffect(() => {
-    if (!hasText && contentType?.startsWith("audio") && audioRef.current) {
-      const audio = audioRef.current;
-      const onLoaded = () => setDuration(audio.duration);
-      audio.addEventListener("loadedmetadata", onLoaded);
-      return () => audio.removeEventListener("loadedmetadata", onLoaded);
-    }
+  useEffect(() => {
+  if (contentType?.startsWith("audio") && audioRef.current) {
+    const audio = audioRef.current;
+    const onLoaded = () => setDuration(audio.duration);
+    audio.addEventListener("loadedmetadata", onLoaded);
+    return () => audio.removeEventListener("loadedmetadata", onLoaded);
+  }
 
-    if (!hasText && contentType?.startsWith("video") && videoRef.current) {
-      const video = videoRef.current;
-      const onLoaded = () => setDuration(video.duration);
-      video.addEventListener("loadedmetadata", onLoaded);
-      return () => video.removeEventListener("loadedmetadata", onLoaded);
-    }
-  }, [hasText, contentType]);
+  if (contentType?.startsWith("video") && videoRef.current) {
+    const video = videoRef.current;
+    const onLoaded = () => setDuration(video.duration);
+    video.addEventListener("loadedmetadata", onLoaded);
+    return () => video.removeEventListener("loadedmetadata", onLoaded);
+  }
+}, [contentType]);
 
   const formatDuration = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -72,7 +71,7 @@ export const PreviewAttachment = ({
         )
       ) : contentType?.startsWith("audio") ? (
         <div className="relative">
-          {hasText ? (
+          
             <audio
               ref={audioRef}
               controls
@@ -83,20 +82,11 @@ export const PreviewAttachment = ({
             >
               <source src={url} type={contentType} />
             </audio>
-          ) : (
-            <div className="w-[240px] h-10  rounded flex items-center px-2">
-              <div className="relative w-full h-2  rounded">
-                <div className="absolute top-0 left-0 h-2 bg-black rounded w-full" />
-              </div>
-              <span className="ml-2 text-xs text-gray-600">
-                {duration ? formatDuration(duration) : "0:00"}
-              </span>
-            </div>
-          )}
+          
         </div>
       ) : contentType?.startsWith("video") ? (
         <div className="relative">
-          {hasText ? (
+          
             <video
               ref={videoRef}
               controls
@@ -107,11 +97,8 @@ export const PreviewAttachment = ({
             >
               <source src={url} type={contentType} />
             </video>
-          ) : (
-            <div className="w-[240px] h-10 bg-gray-200 rounded flex items-center px-2 text-xs text-gray-500">
-              Video message
-            </div>
-          )}
+         
+          
         </div>
       ) : (
         <div className="flex items-center justify-center h-full w-full">

@@ -118,8 +118,7 @@ const hasFiles = message.parts?.some(
     contentType: attachment.mediaType,
     publicId: attachment.publicId,
   }}
-  variant="chat"   // ✅ THIS IS THE KEY FIX
-  hasText={hasText}
+  variant="chat"   
   key={attachment.url}
    
 />
