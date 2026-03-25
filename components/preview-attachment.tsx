@@ -84,7 +84,7 @@ export const PreviewAttachment = ({
               <source src={url} type={contentType} />
             </audio>
           ) : (
-            <div className="w-[240px] h-10 bg-gray-200 rounded flex items-center px-2">
+            <div className="w-[240px] h-10  rounded flex items-center px-2">
               <div className="relative w-full h-2  rounded">
                 <div className="absolute top-0 left-0 h-2 bg-black rounded w-full" />
               </div>
