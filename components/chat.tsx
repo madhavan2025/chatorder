@@ -21,6 +21,8 @@ import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
 
 
+
+
 async function getForm(id: string) {
   const res = await fetch(`/api/forms/${id}`);
   if (!res.ok) throw new Error("Failed to fetch form");
@@ -73,6 +75,63 @@ useEffect(() => {
   setIsExpanded(initialExpanded);
 }, [initialExpanded]);
 
+
+const customerId = "client-d";
+
+function getOrCreateUserId() {
+  if (typeof window === "undefined") return null;
+
+  let userId = localStorage.getItem("chat_user_id");
+
+  if (!userId) {
+    userId = "client-d-" + crypto.randomUUID();
+    localStorage.setItem("chat_user_id", userId);
+  }
+
+  return userId;
+}
+
+async function saveToDB(chatId: string, messages: ChatMessage[]) {
+  const userId = getOrCreateUserId();
+
+  // Group messages into Q/A pairs
+  const qaPairs: { question: ChatMessage; answer?: ChatMessage }[] = [];
+  let lastUserMessage: ChatMessage | null = null;
+
+  for (const msg of messages) {
+    if (msg.role === "user") {
+      lastUserMessage = msg;
+      qaPairs.push({ question: msg });
+    } else if (msg.role === "assistant" && lastUserMessage) {
+      // attach assistant response to last user question
+      qaPairs[qaPairs.length - 1].answer = msg;
+      lastUserMessage = null; // reset
+    }
+  }
+
+  await fetch("/api/save-chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userId,
+      customerId,
+      chatId,
+      qaPairs, // save structured Q/A
+    }),
+  });
+}
+
+useEffect(() => {
+  if (!messages.length) return;
+
+  const timeout = setTimeout(() => {
+    saveToDB(id, messages);
+  }, 500); // debounce
+
+  return () => clearTimeout(timeout);
+}, [messages, id]);
 
   /* ---------------- NO-OP UI HANDLERS ---------------- */
 
