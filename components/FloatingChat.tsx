@@ -31,6 +31,7 @@ const [loadingTheme, setLoadingTheme] = useState(true);
 const [isFullScreen, setIsFullScreen] = useState(false);
 const { setTheme, resolvedTheme } = useTheme();
 const [chatTheme, setChatTheme] = useState<any>(null);
+const [chatKey, setChatKey] = useState(0);
 const isDarkMode = resolvedTheme === "dark";
    useEffect(() => {
     setIsEmbed(isEmbedMode());
@@ -164,7 +165,10 @@ if (isEmbed) return null;
             onClick={() => {
               setIsOpen(false);
               setIsFullScreen(false);
-              
+               if (typeof window !== "undefined") {
+      localStorage.removeItem("chat_user_id");
+    }
+    setChatKey((prev) => prev + 1);
             }}
           >
             ✕
@@ -175,6 +179,7 @@ if (isEmbed) return null;
       {/* CHAT BODY */}
       <div className="flex-1 overflow-hidden">
         <Chat
+        key={chatKey} 
           id={chatId}
           initialMessages={initialMessages}
           initialVisibilityType={initialVisibilityType}
