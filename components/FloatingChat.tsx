@@ -164,6 +164,7 @@ if (isEmbed) return null;
             onClick={() => {
               setIsOpen(false);
               setIsFullScreen(false);
+              
             }}
           >
             ✕

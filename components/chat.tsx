@@ -81,33 +81,41 @@ const customerId = "client-d";
 function getOrCreateUserId() {
   if (typeof window === "undefined") return null;
 
-  let userId = localStorage.getItem("chat_user_id");
+  let userId = localStorage.getItem("chat_user_id"); // ✅ changed
 
   if (!userId) {
     userId = "client-d-" + crypto.randomUUID();
-    localStorage.setItem("chat_user_id", userId);
+    localStorage.setItem("chat_user_id", userId); // ✅ changed
   }
 
   return userId;
 }
 
+let lastSavedPairsCount = 0; // track how many pairs saved so far
+
 async function saveToDB(chatId: string, messages: ChatMessage[]) {
   const userId = getOrCreateUserId();
 
-  // Group messages into Q/A pairs
+  // Build all Q/A pairs from messages
   const qaPairs: { question: ChatMessage; answer?: ChatMessage }[] = [];
   let lastUserMessage: ChatMessage | null = null;
-
   for (const msg of messages) {
     if (msg.role === "user") {
       lastUserMessage = msg;
       qaPairs.push({ question: msg });
     } else if (msg.role === "assistant" && lastUserMessage) {
-      // attach assistant response to last user question
       qaPairs[qaPairs.length - 1].answer = msg;
-      lastUserMessage = null; // reset
+      lastUserMessage = null;
     }
   }
+
+  // Get only new pairs beyond what was saved last time
+  const newPairs = qaPairs.slice(lastSavedPairsCount);
+
+  if (newPairs.length === 0) return; // no new pairs to save
+
+  // Update count so next time only new pairs are sent
+  lastSavedPairsCount = qaPairs.length;
 
   await fetch("/api/save-chat", {
     method: "POST",
@@ -118,20 +126,12 @@ async function saveToDB(chatId: string, messages: ChatMessage[]) {
       userId,
       customerId,
       chatId,
-      qaPairs, // save structured Q/A
+      qaPairs: newPairs, // only new pairs
     }),
   });
 }
 
-useEffect(() => {
-  if (!messages.length) return;
 
-  const timeout = setTimeout(() => {
-    saveToDB(id, messages);
-  }, 500); // debounce
-
-  return () => clearTimeout(timeout);
-}, [messages, id]);
 
   /* ---------------- NO-OP UI HANDLERS ---------------- */
 
@@ -316,14 +316,21 @@ if (lower.includes("show contents")) {
 }
 const answer = await fetchAnswerFromAPI(finalText);
 
- setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        parts: [{ type: "text", text: answer }],
-      },
-    ]);
+ setMessages((prev) => {
+ const updatedMessages = [
+  ...prev,
+  {
+    id: crypto.randomUUID(),
+    role: "assistant" as const,
+    parts: [{ type: "text" as const, text: answer }],
+  },
+];
+
+  const lastTwo = updatedMessages.slice(-2); // user + assistant
+saveToDB(id, lastTwo);
+
+  return updatedMessages;
+});
   } catch (error) {
     console.error("Send message error:", error);
 
