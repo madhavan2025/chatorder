@@ -31,16 +31,17 @@
   });
 
     document.body.appendChild(iframe);
-    iframe.onload = () => {
-  iframe.contentWindow?.postMessage(
-  {
-    type: "parentExpandState",
-    value: isExpanded,
-    screenWidth: window.innerWidth
-  },
-  "*"
-);
-};
+    function sendState() {
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({
+        type: "parentState",
+        isOpen: isOpen,
+        isExpanded: isExpanded,
+        screenWidth: window.innerWidth
+      }, "*");
+    }
+  }
+    
 
 iframe.onload = () => {
     sendState();
