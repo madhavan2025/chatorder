@@ -1,4 +1,7 @@
 (function () {
+  const scriptTag = document.currentScript;
+  const scriptUrl = new URL(scriptTag.src);
+  const customerIdFromUrl = scriptUrl.searchParams.get("id") || "default-client";
   let isOpen = false;
   let isExpanded = false;
 
@@ -137,7 +140,7 @@ function applyFullScreen() {
 
   const openChat = () => {
     if (!iframe.src) {
-      iframe.src = "https://chatorder.vercel.app/?embed=true";
+     iframe.src = `https://chatorder.vercel.app/?embed=true&customerId=${customerIdFromUrl}`;
     }
 
     iframe.style.display = "block";
