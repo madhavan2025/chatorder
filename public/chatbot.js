@@ -63,7 +63,7 @@ document.body.appendChild(overlay);
   const button = document.createElement("button");
   button.innerHTML = `
     <img
-      src="https://wordpressbot.vercel.app/images/chat.png"
+      src="https://chatorder.vercel.app/images/chat.png"
       style="width:60px;height:60px;object-fit:contain;"
     />
   `;
@@ -137,7 +137,7 @@ function applyFullScreen() {
 
   const openChat = () => {
     if (!iframe.src) {
-      iframe.src = "https://wordpressbot.vercel.app/?embed=true";
+      iframe.src = "https://chatorder.vercel.app/?embed=true";
     }
 
     iframe.style.display = "block";
