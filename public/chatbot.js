@@ -1,7 +1,17 @@
 (function () {
-  const scriptTag = document.currentScript;
-  const scriptUrl = new URL(scriptTag.src);
-  const customerIdFromUrl = scriptUrl.searchParams.get("id") || "default-client";
+ // READ CONFIG FROM GLOBAL QUEUE
+let botConfig = {
+  botId: "default-client",
+  theme: "light"
+};
+
+if (window.chatorder && window.chatorder.q) {
+  window.chatorder.q.forEach(([command, config]) => {
+    if (command === "init") {
+      botConfig = { ...botConfig, ...config };
+    }
+  });
+}
   let isOpen = false;
   let isExpanded = false;
 
@@ -141,7 +151,7 @@ function applyFullScreen() {
 
   const openChat = () => {
     if (!iframe.src) {
-     iframe.src = `https://chatorder.vercel.app/?embed=true&customerId=${customerIdFromUrl}`;
+     iframe.src = `https://chatorder.vercel.app/?embed=true&customerId=${botConfig.botId}&theme=${botConfig.theme}`;
     }
 
     iframe.style.display = "block";
