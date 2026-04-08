@@ -365,7 +365,7 @@ saveToDB(id, lastTwo);
 <div
   className="relative flex h-full min-h-0 flex-col items-center bg-white text-black dark:bg-gray-900 dark:text-white"
 >
-<div className="flex-1 items-center w-full overflow-y-auto min-h-0 bg-transparent">
+<div className="flex-1 items-center w-full overflow-y-auto min-h-0 bg-transparent mb-2">
   <div className="mx-auto  flex flex-col">
   <Messages
     chatId={id}
