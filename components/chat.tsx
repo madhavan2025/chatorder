@@ -223,6 +223,10 @@ useEffect(() => {
   }
 ) => {
   if (!message) return;
+  if (!clientId) {
+  console.warn("clientId not ready yet");
+  return;
+}
 
 const textParts =
   message.parts?.filter((p) => p.type === "text") || [];
