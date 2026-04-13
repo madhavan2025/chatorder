@@ -56,7 +56,8 @@ const domainSource = origin || origin;
   .replace(/^https?:\/\//, "") // Remove protocol
   .split("/")[0]               // Get the host (keeps port if present)
   .toLowerCase();
-console.log("Detecting Domain:", domain);
+
+   console.log("Detecting Domain:", domain);
     // 5. Domain validation
     const allowedDomains = clientData.allowedDomains || [];
 
