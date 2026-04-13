@@ -83,12 +83,11 @@ useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const idFromUrl = params.get("clientId");
 
-    if (!idFromUrl) {
-      console.error("❌ Missing clientId");
-      return;
+    if (idFromUrl) {
+      setClientId(idFromUrl.trim()); // trim() to handle any accidental whitespace
+    } else {
+      console.error("❌ Missing clientId in URL params");
     }
-
-    setClientId(idFromUrl);
   }
 }, []);
 
@@ -192,12 +191,12 @@ useEffect(() => {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
+    "x-embed": "true",
   },
   body: JSON.stringify({
-    clientId:clientId,
+    clientId: clientId,
     question,
     topK: 1,
-    parentOrigin: window.location.origin
   }),
   signal: controllerRef.current.signal, 
 });
@@ -224,7 +223,10 @@ useEffect(() => {
   }
 ) => {
   if (!message) return;
- if (!clientId || clientId.length === 0) return;
+  if (!clientId) {
+  console.warn("clientId not ready yet");
+  return;
+}
 
 const textParts =
   message.parts?.filter((p) => p.type === "text") || [];
