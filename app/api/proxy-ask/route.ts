@@ -5,10 +5,11 @@ const ALLOWED_CLIENT_ID = "client-d"; // 🔒 hard lock
 
 export async function POST(request: Request) {
   try {
+    // ✅ 1. Parse body ONCE
     const body = await request.json();
-    const { clientId } = body;
+    const { clientId, parentOrigin } = body;
 
-    // ❌ 1. Missing clientId
+    // ❌ Missing clientId
     if (!clientId) {
       return NextResponse.json(
         { error: "Missing clientId" },
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 🔒 2. HARD CLIENT RESTRICTION
+    // 🔒 2. Hard client restriction
     if (clientId !== ALLOWED_CLIENT_ID) {
       return NextResponse.json(
         { error: "Client not allowed" },
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Connect DB (optional now, but keeping for future)
+    // 3. DB check
     const client = await clientPromise;
     const db = client.db("floating");
 
@@ -39,31 +40,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Extract domain (still useful for logging/security)
-    const origin =
-      request.headers.get("origin") ||
-      request.headers.get("referer") ||
-      "";
-
-    const isEmbed = request.headers.get("x-embed") === "true";
-if (!origin && !isEmbed) {
-  return NextResponse.json(
-    { error: "Unauthorized request (no origin)" },
-    { status: 403 }
-  );
-}
-
-    const domain = origin
-      .replace(/^https?:\/\//, "")
-      .split("/")[0]
-      .toLowerCase();
+    // 🔥 4. Extract domain safely from parentOrigin
+    const domain = parentOrigin
+      ? new URL(parentOrigin).hostname
+      : "";
 
     // 5. Domain validation
     const allowedDomains = clientData.allowedDomains || [];
 
-    const isAllowed = allowedDomains.some((d: string) => {
-      return domain === d || domain.endsWith("." + d);
-    });
+    const isAllowed =
+      allowedDomains.length === 0 ||
+      allowedDomains.some((d: string) =>
+        domain === d || domain.endsWith("." + d)
+      );
 
     if (!isAllowed) {
       return NextResponse.json(

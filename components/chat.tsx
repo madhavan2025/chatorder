@@ -194,9 +194,10 @@ useEffect(() => {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    clientId: clientId,
+    clientId,
     question,
     topK: 1,
+    parentOrigin: window.location.origin
   }),
   signal: controllerRef.current.signal, 
 });
