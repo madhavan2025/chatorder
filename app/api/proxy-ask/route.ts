@@ -55,8 +55,9 @@ const domainSource = origin || origin;
 const domain = domainSource
   .replace(/^https?:\/\//, "")
   .split("/")[0]
+  .split(":")[0]
   .toLowerCase();
-
+console.log("Detecting Domain:", domain);
     // 5. Domain validation
     const allowedDomains = clientData.allowedDomains || [];
 
