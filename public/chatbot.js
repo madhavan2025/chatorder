@@ -2,7 +2,8 @@
  // READ CONFIG FROM GLOBAL QUEUE
 let botConfig = {
   botId: "default-client",
-  theme: "light"
+  theme: "light",
+  parentOrigin: window.location.origin
 };
 
 if (window.chatorder && window.chatorder.q) {

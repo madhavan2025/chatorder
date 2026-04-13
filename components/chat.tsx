@@ -194,7 +194,7 @@ useEffect(() => {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    clientId,
+    clientId:clientId,
     question,
     topK: 1,
     parentOrigin: window.location.origin
@@ -224,10 +224,7 @@ useEffect(() => {
   }
 ) => {
   if (!message) return;
-  if (!clientId) {
-  console.warn("clientId not ready yet");
-  return;
-}
+ if (!clientId || clientId.length === 0) return;
 
 const textParts =
   message.parts?.filter((p) => p.type === "text") || [];
