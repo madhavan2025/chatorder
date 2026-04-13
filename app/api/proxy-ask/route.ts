@@ -39,38 +39,38 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Extract domain
-const origin = request.headers.get("origin") || request.headers.get("referer") || "";
+   const origin = request.headers.get("origin");
+const referer = request.headers.get("referer");
 
-// If it's an embed, we might need to rely on the referer if origin is null
-const isEmbed = request.headers.get("x-embed") === "true" || request.url.includes("embed=true");
+// Use origin first, fallback to referer
+const rawSource = origin || referer || "";
 
-// RELAXED CHECK: If it's a known embed and we have a referer, allow it
-if (!origin && !isEmbed) {
-  return NextResponse.json({ error: "Unauthorized (no origin)" }, { status: 403 });
+if (!rawSource) {
+  return NextResponse.json({ error: "Unauthorized (No Source)" }, { status: 403 });
 }
 
-// Ensure we strip the path from referer if origin is missing
-const domainSource = origin || origin; 
-  const domain = domainSource
-  .replace(/^https?:\/\//, "") // Remove protocol
-  .split("/")[0]               // Get the host (keeps port if present)
+// Robust parsing: handles https://sykasys.com/path -> sykasys.com
+const domain = rawSource
+  .replace(/^https?:\/\//, "") 
+  .split("/")[0]               
   .toLowerCase();
 
-   console.log("Detecting Domain:", domain);
-    // 5. Domain validation
-    const allowedDomains = clientData.allowedDomains || [];
+console.log("Validating Domain:", domain);
 
-    const isAllowed = allowedDomains.some((d: string) => {
-      return domain === d || domain.endsWith("." + d);
-    });
+// 5. Domain validation
+const allowedDomains = clientData.allowedDomains || [];
 
-    if (!isAllowed) {
-      return NextResponse.json(
-        { error: `Domain not allowed: ${domain}` },
-        { status: 403 }
-      );
-    }
+const isAllowed = allowedDomains.some((d: string) => {
+  // exact match or subdomain (e.g., chat.sykasys.com matches sykasys.com)
+  return domain === d.toLowerCase() || domain.endsWith("." + d.toLowerCase());
+});
+
+if (!isAllowed) {
+  return NextResponse.json(
+    { error: `Domain ${domain} not authorized for ${clientId}` },
+    { status: 403 }
+  );
+}
 
     // 6. Call external API
     const response = await fetch(
