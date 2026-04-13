@@ -52,10 +52,9 @@ if (!origin && !isEmbed) {
 
 // Ensure we strip the path from referer if origin is missing
 const domainSource = origin || origin; 
-const domain = domainSource
-  .replace(/^https?:\/\//, "")
-  .split("/")[0]
-  .split(":")[0]
+  const domain = domainSource
+  .replace(/^https?:\/\//, "") // Remove protocol
+  .split("/")[0]               // Get the host (keeps port if present)
   .toLowerCase();
 console.log("Detecting Domain:", domain);
     // 5. Domain validation
