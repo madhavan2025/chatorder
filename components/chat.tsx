@@ -69,28 +69,34 @@ const stop = async () => {
 const votes: { chatId: string; messageId: string; isUpvoted: boolean }[] = [];
 const selectedVisibilityType = initialVisibilityType; // UI stub
 const [isLoading, setIsLoading] = useState(false);
-const [customerId, setCustomerId] = useState<string>("default-client");
+
 const controllerRef = useRef<AbortController | null>(null);
 const [isExpanded, setIsExpanded] = useState(initialExpanded);
 useEffect(() => {
   setIsExpanded(initialExpanded);
 }, [initialExpanded]);
 
+const [clientId, setClientId] = useState<string>("");
 
 useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const idFromUrl = params.get("customerId");
-      if (idFromUrl) {
-        setCustomerId(idFromUrl);
-      }
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    const idFromUrl = params.get("clientId");
+
+    if (!idFromUrl) {
+      console.error("❌ Missing clientId");
+      return;
     }
-  }, []);
+
+    setClientId(idFromUrl);
+  }
+}, []);
+
 
 function getOrCreateUserId() {
   if (typeof window === "undefined") return null;
 
- const storageKey = `chat_user_id_${customerId}`;
+ const storageKey = `chat_user_id_${clientId}`;
     let userId = localStorage.getItem(storageKey); // ✅ changed
 
   if (!userId) {
@@ -134,7 +140,7 @@ async function saveToDB(chatId: string, messages: ChatMessage[]) {
     },
     body: JSON.stringify({
       userId,
-      customerId,
+      clientId,
       chatId,
       qaPairs: newPairs, // only new pairs
     }),
@@ -188,7 +194,7 @@ useEffect(() => {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    clientId: customerId,
+    clientId: clientId,
     question,
     topK: 1,
   }),

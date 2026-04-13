@@ -151,7 +151,7 @@ function applyFullScreen() {
 
   const openChat = () => {
     if (!iframe.src) {
-     iframe.src = `https://chatorder.vercel.app/?embed=true&customerId=${botConfig.botId}&theme=${botConfig.theme}`;
+    iframe.src = `https://chatorder.vercel.app/?embed=true&clientId=${botConfig.clientId}&theme=${botConfig.theme}`;
     }
 
     iframe.style.display = "block";
